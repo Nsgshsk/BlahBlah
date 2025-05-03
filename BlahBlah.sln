@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BlahBlah", "BlahBlah.vcxproj", "{F91C5DA4-7EEC-45C4-80D1-A55233780CD5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F91C5DA4-7EEC-45C4-80D1-A55233780CD5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F91C5DA4-7EEC-45C4-80D1-A55233780CD5}.Debug|Win32.Build.0 = Debug|Win32
+		{F91C5DA4-7EEC-45C4-80D1-A55233780CD5}.Debug|x64.ActiveCfg = Debug|x64
+		{F91C5DA4-7EEC-45C4-80D1-A55233780CD5}.Debug|x64.Build.0 = Debug|x64
+		{F91C5DA4-7EEC-45C4-80D1-A55233780CD5}.Release|Win32.ActiveCfg = Release|Win32
+		{F91C5DA4-7EEC-45C4-80D1-A55233780CD5}.Release|Win32.Build.0 = Release|Win32
+		{F91C5DA4-7EEC-45C4-80D1-A55233780CD5}.Release|x64.ActiveCfg = Release|x64
+		{F91C5DA4-7EEC-45C4-80D1-A55233780CD5}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+EndGlobal
