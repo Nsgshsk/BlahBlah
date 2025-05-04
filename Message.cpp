@@ -28,7 +28,7 @@ void Message::free()
     this->dateTime_[0] = '\0';
 }
 
-Message::Message()
+Message::Message(): dateTime_{}
 {
     this->sender_ = nullptr;
     this->message_ = nullptr;

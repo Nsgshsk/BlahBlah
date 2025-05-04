@@ -1,13 +1,14 @@
 ﻿#pragma once
+#include <cstdint>
 #include <iosfwd>
 
-constexpr unsigned char DATE_TIME_SIZE = 32;
+constexpr uint8_t DATE_TIME_MAX_SIZE = 32;
 
 class Message
 {
-    char* sender_;
-    char dateTime_[DATE_TIME_SIZE + 1];
-    char* message_;
+    char* sender_; // Sender's name
+    char dateTime_[DATE_TIME_MAX_SIZE + 1]; // DateTime string
+    char* message_; // Message text
 
     void copyFrom(const Message& message);
     void moveFrom(Message&& message);
