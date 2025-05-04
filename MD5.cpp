@@ -247,6 +247,6 @@ const uint8_t* calculate_md5(const char* string)
     const uint64_t length = prepare_str_md5(string, data);
     const uint8_t* result = calculate_md5(data, length);
 
-    free_memory(data); // Freeing the memory allocated by data
+    free_memory(data); // Freeing the memory allocated for data
     return result; // Returns pointer to MD5 hash that is 16 bytes (128 bits) size
 }
