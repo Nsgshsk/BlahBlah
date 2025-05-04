@@ -26,8 +26,8 @@ public:
     Chat& operator=(const Chat& other);
     ~Chat();
 
-    Chat(Chat&& other);
-    Chat& operator=(Chat&& other);
+    Chat(Chat&& other) noexcept;
+    Chat& operator=(Chat&& other) noexcept;
 
     const char* getId() const;
     const char* getParticipants() const;
