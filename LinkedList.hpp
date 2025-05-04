@@ -31,14 +31,16 @@ class LinkedList
         Node* current = other.head_;
         while (current != nullptr)
         {
+            add(current->value);
+            current = current->next;
         }
-        throw std::exception("Not implemented");
     }
 
     void moveFrom(LinkedList&& other)
     {
         this->head_ = other.head_;
         this->tail_ = other.tail_;
+        this->size_ = other.size_;
         other.head_ = nullptr;
         other.tail_ = nullptr;
     }
@@ -183,9 +185,13 @@ public:
     void add(const T& value)
     {
         Node* node = new Node(value, this->tail_);
-        this->tail_ = node;
+
         if (head_ == nullptr)
             head_ = node;
+        else
+            this->tail_->next = node;
+
+        this->tail_ = node;
 
         size_++;
     }
@@ -193,12 +199,6 @@ public:
     void insertAt(size_t index, const T& value)
     {
         indexCheckError(index, size_);
-        if (index == size_ - 1)
-        {
-            add(value);
-            return;
-        }
-
         if (index == 0)
         {
             Node* node = new Node(value, nullptr, this->head_);
@@ -208,7 +208,9 @@ public:
         else
         {
             Node* temp = getNodeAt(index);
-            new Node(value, temp->prev, temp);
+            Node* node = new Node(value, temp->prev, temp);
+            temp->prev->next = node;
+            temp->prev = node;
         }
         size_++;
     }
@@ -222,12 +224,14 @@ public:
         {
             Node* temp = this->tail_;
             this->tail_ = temp->prev;
+            this->tail_->next = nullptr;
             delete temp;
         }
         else
         {
             Node* temp = getNodeAt(index);
             temp->prev->next = temp->next;
+            temp->next->prev = temp->prev;
             delete temp;
         }
         size_--;
@@ -236,14 +240,14 @@ public:
     void popFront()
     {
         if (head_ == nullptr)
-            throw std::out_of_range("Can't pop node from empty list");
+            throw std::out_of_range("Can't pop item from empty list");
         removeAt(0);
     }
 
     void popBack()
     {
         if (tail_ == nullptr)
-            throw std::out_of_range("Can't pop node from empty list");
+            throw std::out_of_range("Can't pop item from empty list");
         removeAt(size_ - 1);
     }
 };
