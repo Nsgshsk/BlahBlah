@@ -160,6 +160,7 @@
   </ItemGroup>
     <ItemGroup>
         <ClInclude Include="Chat.h"/>
+      <ClInclude Include="ISerializable.h"/>
       <ClInclude Include="LinkedList.hpp"/>
         <ClInclude Include="Message.h"/>
   </ItemGroup>
