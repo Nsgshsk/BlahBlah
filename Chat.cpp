@@ -82,6 +82,7 @@ Chat::Chat(const Chat& other)
 
 Chat& Chat::operator=(const Chat& other)
 {
+    return *this;
 }
 
 Chat::~Chat()
@@ -94,16 +95,20 @@ Chat::Chat(Chat&& other)
 
 Chat& Chat::operator=(Chat&& other)
 {
+    return *this;
 }
 
 const char* Chat::getId() const
 {
+    return this->id_;
 }
 
 const char* Chat::getParticipants() const
 {
+    return participants_[0];
 }
 
 std::ostream& operator<<(std::ostream& os, const Chat& chat)
 {
+    return os;
 }

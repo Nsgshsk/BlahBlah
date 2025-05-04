@@ -1,5 +1,6 @@
 ﻿#include "Message.h"
 #include <iostream>
+#pragma warning(disable:4996)
 
 void Message::copyFrom(const Message& message)
 {
