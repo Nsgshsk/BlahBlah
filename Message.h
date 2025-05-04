@@ -1,9 +1,12 @@
 ﻿#pragma once
+#include <iosfwd>
+
+constexpr unsigned char DATE_TIME_SIZE = 32;
 
 class Message
 {
     char* sender_;
-    char dateTime_[32];
+    char dateTime_[DATE_TIME_SIZE + 1];
     char* message_;
 
     void copyFrom(const Message& message);
@@ -20,7 +23,5 @@ public:
     Message(Message&& other) noexcept;
     Message& operator=(Message&& other) noexcept;
 
-    const char* getSender() const;
-    const char* getDateTime() const;
-    const char* getMessage() const;
+    friend std::ostream& operator<<(std::ostream& os, const Message& message);
 };
