@@ -2,24 +2,33 @@
 #include <iostream>
 #pragma warning(disable:4996)
 
+// Deep copies the provided message into current message
 void Message::copyFrom(const Message& message)
 {
     size_t length = strlen(message.sender_);
+    this->sender_ = new char[length + 1];
     strcpy_s(this->sender_, length + 1, message.sender_);
+    
     strcpy_s(this->dateTime_, message.dateTime_);
+    
     length = strlen(message.message_);
+    this->message_ = new char[length + 1];
     strcpy_s(this->message_, length + 1, message.message_);
 }
 
+// Moves fields from provided message to current
 void Message::moveFrom(Message&& message)
 {
     this->sender_ = message.sender_;
     message.sender_ = nullptr;
+    
     strcpy_s(this->dateTime_, message.dateTime_);
+    
     this->message_ = message.message_;
     message.message_ = nullptr;
 }
 
+// Frees dynamic memory allocated for fields
 void Message::free()
 {
     delete[] this->sender_;

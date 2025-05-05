@@ -36,7 +36,7 @@ void Chat::copyParticipants(const char* const* participants)
         const char* temp = participants[i]; // This is a participant's name
         size_t tempLength = strlen(temp);
         this->participants_[i] = new char[tempLength + 1];
-        strcpy_s(this->participants_[i], tempLength, temp);
+        strcpy_s(this->participants_[i], tempLength + 1, temp);
     }
 }
 
