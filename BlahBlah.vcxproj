@@ -156,10 +156,16 @@
   <ItemGroup>
     <ClCompile Include="BlahBlah.cpp" />
       <ClCompile Include="Chat.cpp"/>
+      <ClCompile Include="HashManager.cpp" />
+    <ClCompile Include="MD5.cpp"/>
       <ClCompile Include="Message.cpp"/>
   </ItemGroup>
     <ItemGroup>
         <ClInclude Include="Chat.h"/>
+        <ClInclude Include="HashManager.h" />
+      <ClInclude Include="ISerializable.h"/>
+      <ClInclude Include="LinkedList.hpp"/>
+      <ClInclude Include="MD5.h"/>
         <ClInclude Include="Message.h"/>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
