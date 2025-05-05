@@ -1,9 +1,13 @@
 ﻿#pragma once
+#include <fstream>
 #include <stdexcept>
 
+#include "ISerializable.h"
+
 template <typename T>
-class LinkedList
+class LinkedList : public ISerializable
 {
+    // Base Node class
     struct Node
     {
         T value;
@@ -15,6 +19,7 @@ class LinkedList
         }
     };
 
+    // Structure of linked list
     Node* head_;
     Node* tail_;
     size_t size_;
@@ -26,6 +31,7 @@ class LinkedList
             throw std::out_of_range("index is out of range");
     }
 
+    // Copies items from other to this list
     void copyFrom(const LinkedList& other)
     {
         Node* current = other.head_;
@@ -36,6 +42,7 @@ class LinkedList
         }
     }
 
+    // Moves the items head and tail of the rvalue list other to this
     void moveFrom(LinkedList&& other)
     {
         this->head_ = other.head_;
@@ -138,7 +145,7 @@ public:
         return *this;
     }
 
-    ~LinkedList()
+    ~LinkedList() override
     {
         free();
     }
@@ -196,10 +203,11 @@ public:
         size_++;
     }
 
+    // Inserts an item at given index and shifts elements to the right 
     void insertAt(size_t index, const T& value)
     {
         indexCheckError(index, size_);
-        if (index == 0)
+        if (index == 0) // Special case for first item
         {
             Node* node = new Node(value, nullptr, this->head_);
             this->head_->prev = node;
@@ -215,12 +223,13 @@ public:
         size_++;
     }
 
+    // Removes an item at a given index and shifts elements to the left
     void removeAt(size_t index)
     {
         indexCheckError(index, size_);
-        if (index == 0)
+        if (index == 0) // Similar functionality as pop
             delete popNode();
-        else if (index == size_ - 1)
+        else if (index == size_ - 1) // Special case for end of list
         {
             Node* temp = this->tail_;
             this->tail_ = temp->prev;
@@ -237,6 +246,7 @@ public:
         size_--;
     }
 
+    // Pops an item from the head of the list
     void popFront()
     {
         if (head_ == nullptr)
@@ -244,10 +254,50 @@ public:
         removeAt(0);
     }
 
+    // Pops an item from the tail of the list
     void popBack()
     {
         if (tail_ == nullptr)
             throw std::out_of_range("Can't pop item from empty list");
         removeAt(size_ - 1);
+    }
+
+    // Serializes a list into a binary file
+    void serialize(std::ofstream& ofs) const override
+    {
+        // Writes the size of the list at the beginning of the file
+        ofs.write((const char*)&size_, sizeof(size_t));
+
+        // Writes each value of the list into a file
+        Node* current = head_;
+        while (current != nullptr)
+        {
+            ofs.write((const char*)&current->value, sizeof(T));
+            current = current->next;
+        }
+    }
+
+    // Deserializes a binary file into the elements of the linked list
+    void deserialize(std::ifstream& ifs) override
+    {
+        free();
+        ifs.read((char*)&size_, sizeof(size_t));
+        for (size_t i = 0; i < size_; i++)
+        {
+            T value = ifs.read((char*)&value, sizeof(T));
+            this->add(value);
+        }
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const LinkedList& list)
+    {
+        Node* current = list.head_;
+        while (current != nullptr)
+        {
+            os << current->value << '\n';
+            current = current->next;
+        }
+
+        return os;
     }
 };
