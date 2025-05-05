@@ -284,7 +284,8 @@ public:
         ifs.read((char*)&size_, sizeof(size_t));
         for (size_t i = 0; i < size_; i++)
         {
-            T value = ifs.read((char*)&value, sizeof(T));
+            T value;
+            ifs.read((char*)&value, sizeof(T));
             this->add(value);
         }
     }
