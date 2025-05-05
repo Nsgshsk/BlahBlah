@@ -236,7 +236,7 @@ namespace
 
 //         Calculates the MD5 hash of a string.
 //
-// !!!       Result is dynamically allocated       !!!
+// !!!        Hash is dynamically allocated        !!!
 // !!! You should clear the hash when done with it !!!
 const uint8_t* calculate_md5(const char* string)
 {
