@@ -116,30 +116,63 @@ void Message::serialize(std::ofstream& ofs) const
 // Deserializes message from a binary file
 void Message::deserialize(std::ifstream& ifs)
 {
-    free();
+    free(); // Clears message before deserializing new data
     
-    size_t temp;
-    ifs.read((char*)&temp, sizeof(size_t));
+    size_t temp; // Temporary variable for lengths
+
+    // Sender string deserialization from binary
+    ifs.read((char*)&temp, sizeof(size_t)); // Sender string length
     sender_ = new char[temp + 1];
     ifs.read(sender_, temp + 1);
 
+    // Datetime string deserialization from binary
     ifs.read(dateTime_, sizeof(dateTime_));
-    
-    ifs.read((char*)&temp, sizeof(size_t));
+
+    // Message string deserialization from text
+    ifs.read((char*)&temp, sizeof(size_t)); // Message string length
     message_ = new char[temp + 1];
     ifs.read(message_, temp + 1);
 }
 
+// Serializes message into a text file
 void Message::serialize_debug(std::ofstream& ofs) const
 {
+    // Serializes sender string into text
+    ofs << strlen(sender_) << '\n'; // Sender string length
     ofs << sender_ << '\n';
-    ofs << dateTime_ << '\n';
+
+    // Serializes datetime string into text
+    ofs << strlen(dateTime_) << '\n'; // Datetime string length
+    ofs << dateTime_;
+
+    // Serializes message into text
+    ofs << strlen(message_) << '\n'; // Message string length
     ofs << message_ << '\n';
 }
 
+// Deserializes message from text file
 void Message::deserialize_debug(std::ifstream& ifs)
 {
-    ifs >> sender_ >> dateTime_ >> message_;
+    free(); // Clears message before deserializing new data
+    
+    size_t temp; // Temporary variable for lengths
+
+    // Sender string deserialization from text
+    ifs >> temp; // Sender string length
+    sender_ = new char[temp + 1];
+    ifs >> sender_;
+
+    // Datetime string deserialization from text
+    ifs >> temp; // Datetime string length
+    ifs.ignore(); // Ignores the newline character
+    ifs.getline(dateTime_, temp + 1);
+    dateTime_[temp - 1] = '\n'; // Puts a newline character at the end of datetime string
+
+    // Message string deserialization from text
+    ifs >> temp; // Message string length
+    message_ = new char[temp + 1];
+    ifs.ignore(); // Ignores the newline character
+    ifs.getline(message_, temp + 1);
 }
 
 std::ostream& operator<<(std::ostream& os, const Message& message)

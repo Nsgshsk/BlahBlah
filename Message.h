@@ -9,6 +9,7 @@ constexpr uint8_t DATE_TIME_MAX_SIZE = 32;
 class Message final : public ISerializable, public ISerializableDebug
 {
     char* sender_; // Sender's name
+    // *Note: DateTime string ends with a newline character before terminating zero
     char dateTime_[DATE_TIME_MAX_SIZE + 1]; // DateTime string
     char* message_; // Message text
 
