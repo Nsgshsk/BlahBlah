@@ -1,5 +1,6 @@
 ﻿#include "Message.h"
 #include <iostream>
+#include <fstream>
 #pragma warning(disable:4996)
 
 // Deep copies the provided message into current message
@@ -96,6 +97,49 @@ Message& Message::operator=(Message&& other) noexcept
     }
 
     return *this;
+}
+
+// Serializes message into a binary file
+void Message::serialize(std::ofstream& ofs) const
+{
+    size_t temp = strlen(sender_);
+    ofs.write((const char*)&temp, sizeof(size_t));
+    ofs.write(sender_, temp + 1);
+
+    ofs.write(dateTime_, sizeof(dateTime_));
+
+    temp = strlen(message_);
+    ofs.write((const char*)&temp, sizeof(size_t));
+    ofs.write(message_, temp + 1);
+}
+
+// Deserializes message from a binary file
+void Message::deserialize(std::ifstream& ifs)
+{
+    free();
+    
+    size_t temp;
+    ifs.read((char*)&temp, sizeof(size_t));
+    sender_ = new char[temp + 1];
+    ifs.read(sender_, temp + 1);
+
+    ifs.read(dateTime_, sizeof(dateTime_));
+    
+    ifs.read((char*)&temp, sizeof(size_t));
+    message_ = new char[temp + 1];
+    ifs.read(message_, temp + 1);
+}
+
+void Message::serialize_debug(std::ofstream& ofs) const
+{
+    ofs << sender_ << '\n';
+    ofs << dateTime_ << '\n';
+    ofs << message_ << '\n';
+}
+
+void Message::deserialize_debug(std::ifstream& ifs)
+{
+    ifs >> sender_ >> dateTime_ >> message_;
 }
 
 std::ostream& operator<<(std::ostream& os, const Message& message)
