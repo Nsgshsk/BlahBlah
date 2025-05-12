@@ -5,7 +5,7 @@
 #include "ISerializable.h"
 
 template <typename T>
-class LinkedList : public ISerializable
+class LinkedList
 {
     // Base Node class
     struct Node
@@ -14,11 +14,16 @@ class LinkedList : public ISerializable
         Node* prev;
         Node* next;
 
-        Node(T value, Node* prev = nullptr, Node* next = nullptr) : value(value), prev(prev), next(next)
+        Node(T& value, Node* prev = nullptr, Node* next = nullptr) : value(value), prev(prev), next(next)
         {
         }
-    };
 
+        Node(T&& value, Node* prev = nullptr, Node* next = nullptr) : prev(prev), next(next)
+        {
+            this->value = std::move(value);
+        }
+    };
+    
     // Structure of linked list
     Node* head_;
     Node* tail_;
@@ -145,7 +150,7 @@ public:
         return *this;
     }
 
-    ~LinkedList() override
+    ~LinkedList()
     {
         free();
     }
