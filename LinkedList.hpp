@@ -5,8 +5,9 @@
 #include "ISerializable.h"
 
 template <typename T>
-class LinkedList
+class LinkedList : public ISerializable
 {
+protected:
     // Base Node class
     struct Node
     {
@@ -23,7 +24,13 @@ class LinkedList
             this->value = std::move(value);
         }
     };
-    
+
+    const Node* peekNode() const
+    {
+        return head_;
+    }
+
+private:
     // Structure of linked list
     Node* head_;
     Node* tail_;
@@ -33,7 +40,13 @@ class LinkedList
     static void indexCheckError(size_t index, size_t size)
     {
         if (index >= size || index < 0)
-            throw std::out_of_range("index is out of range");
+            throw std::out_of_range("Index is out of range");
+    }
+
+    static void emptyCheckError(Node* head)
+    {
+        if (head == nullptr)
+            throw std::out_of_range("List is empty");
     }
 
     // Copies items from other to this list
@@ -62,12 +75,25 @@ class LinkedList
     {
         Node* current = head_;
 
-        if (current == nullptr)
-            throw std::out_of_range("Can't pop node from empty list");
+        emptyCheckError(current);
 
         head_ = head_->next;
         if (head_ == nullptr)
             tail_ = nullptr;
+
+        return current;
+    }
+
+    // Removes last node from linked list and returns it
+    Node* popNodeBack()
+    {
+        Node* current = tail_;
+
+        emptyCheckError(current);
+
+        tail_ = tail_->prev;
+        if (tail_ == nullptr)
+            head_ = nullptr;
 
         return current;
     }
@@ -150,7 +176,7 @@ public:
         return *this;
     }
 
-    ~LinkedList()
+    ~LinkedList() override
     {
         free();
     }
@@ -235,12 +261,7 @@ public:
         if (index == 0) // Similar functionality as pop
             delete popNode();
         else if (index == size_ - 1) // Special case for end of list
-        {
-            Node* temp = this->tail_;
-            this->tail_ = temp->prev;
-            this->tail_->next = nullptr;
-            delete temp;
-        }
+            delete popNodeBack();
         else
         {
             Node* temp = getNodeAt(index);
@@ -252,19 +273,45 @@ public:
     }
 
     // Pops an item from the head of the list
-    void popFront()
+    void pop()
     {
-        if (head_ == nullptr)
-            throw std::out_of_range("Can't pop item from empty list");
+        emptyCheckError(head_);
         removeAt(0);
+    }
+
+    // Returns mutable value from head of the list
+    T& peek()
+    {
+        emptyCheckError(head_);
+        return getValueAt(0);
+    }
+
+    // Returns a read-only value from head of the list
+    const T& peek() const
+    {
+        emptyCheckError(head_);
+        return getValueAt(0);
     }
 
     // Pops an item from the tail of the list
     void popBack()
     {
-        if (tail_ == nullptr)
-            throw std::out_of_range("Can't pop item from empty list");
+        emptyCheckError(tail_);
         removeAt(size_ - 1);
+    }
+
+    // Returns mutable value from head of the list
+    T& peekBack()
+    {
+        emptyCheckError(tail_);
+        return getValueAt(size_ - 1);
+    }
+
+    // Returns a read-only value from tail of the list
+    const T& peekBack() const
+    {
+        emptyCheckError(tail_);
+        return getValueAt(size_ - 1);
     }
 
     // Serializes a list into a binary file
