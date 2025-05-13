@@ -1,7 +1,6 @@
 ﻿#include "UserBase.h"
-
-#include <algorithm>
-#include <cstring>
+#include <iostream>
+#include <fstream>
 
 void UserBase::copyFrom(const char* id, const char* name)
 {
@@ -58,12 +57,12 @@ UserBase::~UserBase()
     free();
 }
 
-UserBase::UserBase(UserBase&& other)
+UserBase::UserBase(UserBase&& other) noexcept
 {
     moveFrom(std::move(other));
 }
 
-UserBase& UserBase::operator=(UserBase&& other)
+UserBase& UserBase::operator=(UserBase&& other) noexcept
 {
     if (this != &other)
     {
@@ -71,4 +70,40 @@ UserBase& UserBase::operator=(UserBase&& other)
         moveFrom(std::move(other));
     }
     return *this;
+}
+
+void UserBase::serialize(std::ofstream& ofs) const
+{
+    size_t temp = strlen(id_);
+    ofs.write(id_, temp + 1);
+    
+    temp = strlen(name_);
+    ofs.write((const char*)&temp, sizeof(size_t));
+    ofs.write(name_, temp + 1);
+}
+
+void UserBase::deserialize(std::ifstream& ifs)
+{
+    free();
+
+    size_t temp = strlen(id_);
+    ifs.read(id_, temp + 1);
+    
+    ifs.read((char*)&temp, sizeof(size_t));
+    ifs.read(name_, temp + 1);
+}
+
+void UserBase::serialize_debug(std::ofstream& ofs) const
+{
+    ofs << id_ << ' ';
+    ofs << strlen(name_) << ' ';
+    ofs << name_ << '\n';
+}
+
+void UserBase::deserialize_debug(std::ifstream& ifs)
+{
+    size_t temp;
+    ifs >> id_ >> temp;
+    name_ = new char[temp + 1];
+    ifs >> name_;
 }
