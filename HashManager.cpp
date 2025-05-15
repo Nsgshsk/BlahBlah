@@ -81,3 +81,9 @@ const unsigned char* HashManager::hash_chat(const char* chat)
 
     return hash; // Returning md5 hash
 }
+
+void HashManager::copyHash(unsigned char dest[16], const unsigned char src[16])
+{
+    for (int i = 0; i < HASH_SIZE; i++)
+        dest[i] = src[i];
+}

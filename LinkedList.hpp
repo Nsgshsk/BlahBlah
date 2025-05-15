@@ -69,6 +69,8 @@ public:
     T& peekBack();
     const T& peekBack() const;
 
+    const T* asConstArray() const;
+
     friend std::ostream& operator<<(std::ostream& os, const LinkedList& list)
     {
         Node* current = list.head_;
@@ -408,4 +410,23 @@ const T& LinkedList<T>::peekBack() const
 {
     emptyCheckError(tail_);
     return getValueAt(size_ - 1);
+}
+
+// Returns a readonly copy of the list as an array that ends with a nullptr at the end
+// !!!  This array is dynamically allocated please handle its deletion after use   !!!
+template <typename T>
+const T* LinkedList<T>::asConstArray() const
+{
+    if (head_ == nullptr)
+        return nullptr;
+    
+    T* temp = new T[size_ + 1]{nullptr};
+    Node* current = head_;
+    for (size_t i = 0; i < size_; i++)
+    {
+        temp[i] = &current->value;
+        current = current->next;
+    }
+
+    return temp;
 }
