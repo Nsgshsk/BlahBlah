@@ -4,12 +4,11 @@
 #include "ISerializable.h"
 #include "LinkedList.hpp"
 
-template <typename T,
-std::enable_if_t<std::is_base_of_v<ISerializable, T>, int> = 0>
+template <typename T>
 class SerializableList : public LinkedList<T>
 {
 public:
-    void serialize(std::ofstream& ofs) const
+    void serialize(std::ofstream& ofs, std::enable_if_t<std::is_base_of_v<ISerializable, T>, int> = 0) const
     {
         // Writes the size of the list at the beginning of the file
         size_t temp = this->getSize();
@@ -23,7 +22,7 @@ public:
         }
     }
 
-    void deserialize(std::ifstream& ifs)
+    void deserialize(std::ifstream& ifs, std::enable_if_t<std::is_base_of_v<ISerializable, T>, int> = 0)
     {
         this->clear();
         size_t temp;
@@ -37,7 +36,7 @@ public:
         }
     }
 
-    void serialize_debug(std::ofstream& ofs) const
+    void serialize_debug(std::ofstream& ofs, std::enable_if_t<std::is_base_of_v<ISerializableDebug, T>, int> = 0) const
     {
         ofs << this->getSize() << '\n';
         const typename LinkedList<T>::Node* current = this->peekNode();
@@ -48,7 +47,7 @@ public:
         }
     }
 
-    void deserialize_debug(std::ifstream& ifs)
+    void deserialize_debug(std::ifstream& ifs, std::enable_if_t<std::is_base_of_v<ISerializableDebug, T>, int> = 0)
     {
         this->clear();
 
