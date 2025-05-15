@@ -1,64 +1,61 @@
 ﻿#pragma once
-#include <iosfwd>
-
+#include <fstream>
+#include <iostream>
 #include "ISerializable.h"
-#include "LinkedList.hpp"
+#include "List.hpp"
 
-template <typename T>
-class SerializableList : public LinkedList<T>
+template<class T>
+class SerializableList : public List<T*>, public ISerializable, public ISerializableDebug
 {
 public:
-    void serialize(std::ofstream& ofs, std::enable_if_t<std::is_base_of_v<ISerializable, T>, int> = 0) const
-    {
-        // Writes the size of the list at the beginning of the file
-        size_t temp = this->getSize();
-        ofs.write((const char*)&temp, sizeof(size_t));
-
-        const typename LinkedList<T>::Node* current = this->peekNode();
-        while (current != nullptr)
-        {
-            current->value.serialize(ofs);
-            current = current->next;
-        }
-    }
-
-    void deserialize(std::ifstream& ifs, std::enable_if_t<std::is_base_of_v<ISerializable, T>, int> = 0)
-    {
-        this->clear();
-        size_t temp;
-
-        ifs.read((char*)&temp, sizeof(size_t));
-        for (size_t i = 0; i < temp; i++)
-        {
-            T value;
-            value.deserialize(ifs);
-            this->add(value);
-        }
-    }
-
-    void serialize_debug(std::ofstream& ofs, std::enable_if_t<std::is_base_of_v<ISerializableDebug, T>, int> = 0) const
-    {
-        ofs << this->getSize() << '\n';
-        const typename LinkedList<T>::Node* current = this->peekNode();
-        while (current != nullptr)
-        {
-            current->value.serialize_debug(ofs);
-            current = current->next;
-        }
-    }
-
-    void deserialize_debug(std::ifstream& ifs, std::enable_if_t<std::is_base_of_v<ISerializableDebug, T>, int> = 0)
-    {
-        this->clear();
-
-        size_t temp;
-        ifs >> temp;
-        ifs.ignore();
-        for (size_t i = 0; i < temp; i++)
-        {
-            T value;
-            value.deserialize_debug(ifs);
-            this->add(value);
-        }
-    }
+    void serialize(std::ofstream& ofs) const override;
+    void deserialize(std::ifstream& ifs) override;
+    void serialize_debug(std::ofstream& ofs) const override;
+    void deserialize_debug(std::ifstream& ifs) override;
 };
+
+template <class T>
+void SerializableList<T>::serialize(std::ofstream& ofs) const
+{
+    ofs.write((const char*)&this->size_, sizeof(size_t));
+    for (size_t i = 0; i < this->size_; i++)
+        (*this)[i].serialize(ofs);
+}
+
+template <class T>
+void SerializableList<T>::deserialize(std::ifstream& ifs)
+{
+    this->clear();
+    
+    ifs.read((char*)&this->size_, sizeof(size_t));;
+    this->reserve(this->size_);
+    for (size_t i = 0; i < this->size_; i++)
+    {
+        T value;
+        value.deserialize(ifs);
+        this->add(value);
+    }
+}
+
+template <class T>
+void SerializableList<T>::serialize_debug(std::ofstream& ofs) const
+{
+    ofs << this->size_ << '\n';
+    for (size_t i = 0; i < this->size_; i++)
+        (*this)[i].serialize_debug(ofs);
+}
+
+template <class T>
+void SerializableList<T>::deserialize_debug(std::ifstream& ifs)
+{
+    this->clear();
+    
+    ifs >> this->size_;
+    this->reserve(this->size_);
+    for (size_t i = 0; i < this->size_; i++)
+    {
+        T value;
+        value.deserialize(ifs);
+        this->add(value);
+    }
+}
