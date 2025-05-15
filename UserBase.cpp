@@ -6,7 +6,7 @@
 
 void UserBase::copyFrom(const uint8_t* hash, const char* name)
 {
-    HashManager::copyHash(this->hash_, hash);
+    HashManager::copy_hash(this->hash_, hash);
     size_t temp = strlen(name);
     this->name_ = new char[temp + 1];
     strcpy_s(this->name_, temp + 1, name);
@@ -19,14 +19,15 @@ void UserBase::copyFrom(const UserBase& other)
 
 void UserBase::moveFrom(UserBase&& other)
 {
-    HashManager::copyHash(this->hash_, other.hash_);
+    HashManager::copy_hash(this->hash_, other.hash_);
     this->name_ = other.name_;
     other.name_ = nullptr;
 }
 
 void UserBase::free()
 {
-    hash_ = {0};
+    for (uint8_t i = 0; i < HASH_SIZE; i++)
+        hash_[i] = 0;
     delete[] name_;
 }
 

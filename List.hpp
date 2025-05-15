@@ -4,7 +4,7 @@
 constexpr uint8_t DEFAULT_LIST_CAPACITY = 16;
 
 template<class T>
-class List<T*>
+class List
 {
     T** data_;
     size_t size_;
@@ -114,7 +114,7 @@ void List<T>::free()
 template <class T>
 void List<T>::resize(size_t newSize)
 {
-    T** newData = new T*[newSize];
+    T** newData = new T*[newSize]{nullptr};
     for (size_t i = 0; i < size_; i++)
         newData[i] = data_[i];
 
@@ -134,7 +134,7 @@ void List<T>::resize()
 template <class T>
 List<T>::List() : size_(0), capacity_(DEFAULT_LIST_CAPACITY)
 {
-    data_ = new T*[DEFAULT_LIST_CAPACITY];
+    data_ = new T*[DEFAULT_LIST_CAPACITY]{nullptr};
 }
 
 template <class T>

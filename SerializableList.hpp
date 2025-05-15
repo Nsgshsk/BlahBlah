@@ -1,24 +1,24 @@
 ﻿#pragma once
 #include <fstream>
 #include <iostream>
-#include "ISerializable.h"
 #include "List.hpp"
 
 template<class T>
-class SerializableList : public List<T*>, public ISerializable, public ISerializableDebug
+class SerializableList : public List<T>
 {
 public:
-    void serialize(std::ofstream& ofs) const override;
-    void deserialize(std::ifstream& ifs) override;
-    void serialize_debug(std::ofstream& ofs) const override;
-    void deserialize_debug(std::ifstream& ifs) override;
+    void serialize(std::ofstream& ofs) const;
+    void deserialize(std::ifstream& ifs);
+    void serialize_debug(std::ofstream& ofs) const;
+    void deserialize_debug(std::ifstream& ifs);
 };
 
 template <class T>
 void SerializableList<T>::serialize(std::ofstream& ofs) const
 {
-    ofs.write((const char*)&this->size_, sizeof(size_t));
-    for (size_t i = 0; i < this->size_; i++)
+    size_t size = this->getSize();
+    ofs.write((const char*)&size, sizeof(size_t));
+    for (size_t i = 0; i < size; i++)
         (*this)[i].serialize(ofs);
 }
 
@@ -26,10 +26,11 @@ template <class T>
 void SerializableList<T>::deserialize(std::ifstream& ifs)
 {
     this->clear();
-    
-    ifs.read((char*)&this->size_, sizeof(size_t));;
-    this->reserve(this->size_);
-    for (size_t i = 0; i < this->size_; i++)
+
+    size_t size = this->getSize();
+    ifs.read((char*)&size, sizeof(size_t));;
+    this->reserve(size);
+    for (size_t i = 0; i < size; i++)
     {
         T value;
         value.deserialize(ifs);
@@ -40,8 +41,8 @@ void SerializableList<T>::deserialize(std::ifstream& ifs)
 template <class T>
 void SerializableList<T>::serialize_debug(std::ofstream& ofs) const
 {
-    ofs << this->size_ << '\n';
-    for (size_t i = 0; i < this->size_; i++)
+    ofs << this->getSize() << '\n';
+    for (size_t i = 0; i < this->getSize(); i++)
         (*this)[i].serialize_debug(ofs);
 }
 
@@ -49,13 +50,14 @@ template <class T>
 void SerializableList<T>::deserialize_debug(std::ifstream& ifs)
 {
     this->clear();
-    
-    ifs >> this->size_;
-    this->reserve(this->size_);
-    for (size_t i = 0; i < this->size_; i++)
+
+    size_t size;
+    ifs >> size;
+    this->reserve(size);
+    for (size_t i = 0; i < size; i++)
     {
         T value;
-        value.deserialize(ifs);
+        value.deserialize_debug(ifs);
         this->add(value);
     }
 }
