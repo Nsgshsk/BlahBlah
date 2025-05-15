@@ -2,9 +2,11 @@
 #include <iostream>
 #include <fstream>
 
-void UserBase::copyFrom(const char* id, const char* name)
+#include "HashManager.h"
+
+void UserBase::copyFrom(const uint8_t* hash, const char* name)
 {
-    strcpy_s(this->id_, id);
+    HashManager::copyHash(this->hash_, hash);
     size_t temp = strlen(name);
     this->name_ = new char[temp + 1];
     strcpy_s(this->name_, temp + 1, name);
@@ -12,29 +14,29 @@ void UserBase::copyFrom(const char* id, const char* name)
 
 void UserBase::copyFrom(const UserBase& other)
 {
-    copyFrom(other.id_, other.name_);
+    copyFrom(other.hash_, other.name_);
 }
 
 void UserBase::moveFrom(UserBase&& other)
 {
-    strcpy_s(this->id_, other.id_);
+    HashManager::copyHash(this->hash_, other.hash_);
     this->name_ = other.name_;
     other.name_ = nullptr;
 }
 
 void UserBase::free()
 {
-    id_[0] = '\0';
+    hash_ = {0};
     delete[] name_;
 }
 
-UserBase::UserBase() : id_{}, name_(nullptr) 
+UserBase::UserBase() : hash_{0}, name_(nullptr) 
 {
 }
 
-UserBase::UserBase(const char* id, const char* name)
+UserBase::UserBase(const uint8_t* hash, const char* name)
 {
-    copyFrom(id, name);
+    copyFrom(hash, name);
 }
 
 UserBase::UserBase(const UserBase& other)
@@ -72,12 +74,20 @@ UserBase& UserBase::operator=(UserBase&& other) noexcept
     return *this;
 }
 
+bool UserBase::operator==(const UserBase& other) const
+{
+    for (size_t i = 0; i < HASH_LENGTH; i++)
+        if (this->hash_[i] != other.hash_[i])
+            return false;
+
+    return true;
+}
+
 void UserBase::serialize(std::ofstream& ofs) const
 {
-    size_t temp = strlen(id_);
-    ofs.write(id_, temp + 1);
+    ofs.write((const char*)&hash_, HASH_LENGTH);
     
-    temp = strlen(name_);
+    size_t temp = strlen(name_);
     ofs.write((const char*)&temp, sizeof(size_t));
     ofs.write(name_, temp + 1);
 }
@@ -85,25 +95,35 @@ void UserBase::serialize(std::ofstream& ofs) const
 void UserBase::deserialize(std::ifstream& ifs)
 {
     free();
+    ifs.read((char*)&hash_, HASH_LENGTH);
 
-    size_t temp = strlen(id_);
-    ifs.read(id_, temp + 1);
-    
+    size_t temp;
     ifs.read((char*)&temp, sizeof(size_t));
+    name_ = new char[temp + 1];
     ifs.read(name_, temp + 1);
 }
 
 void UserBase::serialize_debug(std::ofstream& ofs) const
 {
-    ofs << id_ << ' ';
-    ofs << strlen(name_) << ' ';
+    for (uint8_t i = 0; i < HASH_LENGTH - 1; i++)
+        ofs << this->hash_[i] << ' ';
+    ofs << this->hash_[HASH_LENGTH - 1] << '\n';
+    ofs << strlen(name_) << '\n';
     ofs << name_ << '\n';
 }
 
 void UserBase::deserialize_debug(std::ifstream& ifs)
 {
+    for (uint8_t i = 0; i < HASH_LENGTH - 1; i++)
+        ifs >> this->hash_[i];
+    
     size_t temp;
-    ifs >> id_ >> temp;
+    ifs >> temp;
     name_ = new char[temp + 1];
     ifs >> name_;
+}
+
+bool operator!=(const UserBase& lhs, const UserBase& rhs)
+{
+    return !(lhs == rhs);
 }
