@@ -128,3 +128,10 @@ bool operator!=(const UserBase& lhs, const UserBase& rhs)
 {
     return !(lhs == rhs);
 }
+
+std::ostream& operator<<(std::ostream& os, const UserBase& user)
+{
+    os << user.name_ << ' ';
+
+    return os;
+}
