@@ -2,10 +2,8 @@
 #include <fstream>
 #include <stdexcept>
 
-#include "ISerializable.h"
-
 template <typename T>
-class LinkedList : public ISerializable
+class LinkedList
 {
 protected:
     // Base Node class
@@ -15,7 +13,7 @@ protected:
         Node* prev;
         Node* next;
 
-        Node(T& value, Node* prev = nullptr, Node* next = nullptr);
+        Node(const T& value, Node* prev = nullptr, Node* next = nullptr);
         Node(T&& value, Node* prev = nullptr, Node* next = nullptr);
     };
 
@@ -48,7 +46,7 @@ public:
     LinkedList();
     LinkedList(const LinkedList& other);
     LinkedList& operator=(const LinkedList& other);
-    ~LinkedList() override;
+    ~LinkedList();
 
     LinkedList(LinkedList&& other) noexcept;
     LinkedList& operator=(LinkedList&& other) noexcept;
@@ -70,9 +68,6 @@ public:
     void popBack();
     T& peekBack();
     const T& peekBack() const;
-    
-    void serialize(std::ofstream& ofs) const override;
-    void deserialize(std::ifstream& ifs) override;
 
     friend std::ostream& operator<<(std::ostream& os, const LinkedList& list)
     {
@@ -89,7 +84,7 @@ public:
 
 // Node constructor
 template <typename T>
-LinkedList<T>::Node::Node(T& value, Node* prev, Node* next): value(value), prev(prev), next(next)
+LinkedList<T>::Node::Node(const T& value, Node* prev, Node* next): value(value), prev(prev), next(next)
 {
 }
 
@@ -413,34 +408,4 @@ const T& LinkedList<T>::peekBack() const
 {
     emptyCheckError(tail_);
     return getValueAt(size_ - 1);
-}
-
-// Serializes a list into a binary file
-template <typename T>
-void LinkedList<T>::serialize(std::ofstream& ofs) const
-{
-    // Writes the size of the list at the beginning of the file
-    ofs.write((const char*)&size_, sizeof(size_t));
-
-    // Writes each value of the list into a file
-    Node* current = head_;
-    while (current != nullptr)
-    {
-        ofs.write((const char*)&current->value, sizeof(T));
-        current = current->next;
-    }
-}
-
-// Deserializes a binary file into the elements of the linked list
-template <typename T>
-void LinkedList<T>::deserialize(std::ifstream& ifs)
-{
-    free();
-    ifs.read((char*)&size_, sizeof(size_t));
-    for (size_t i = 0; i < size_; i++)
-    {
-        T value;
-        ifs.read((char*)&value, sizeof(T));
-        this->add(value);
-    }
 }

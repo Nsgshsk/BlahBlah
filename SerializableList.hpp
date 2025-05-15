@@ -3,19 +3,18 @@
 
 #include "ISerializable.h"
 #include "LinkedList.hpp"
-#include "Message.h"
 
-template <>
-class SerializableList<Message> : public LinkedList<Message>, public ISerializableDebug
+template <typename T>
+class SerializableList : public LinkedList<T>
 {
 public:
-    void serialize(std::ofstream& ofs) const final
+    void serialize(std::ofstream& ofs, std::enable_if_t<std::is_base_of_v<ISerializable, T>, int> = 0) const
     {
         // Writes the size of the list at the beginning of the file
-        size_t temp = getSize();
+        size_t temp = this->getSize();
         ofs.write((const char*)&temp, sizeof(size_t));
 
-        const Node* current = peekNode();
+        const typename LinkedList<T>::Node* current = this->peekNode();
         while (current != nullptr)
         {
             current->value.serialize(ofs);
@@ -23,24 +22,24 @@ public:
         }
     }
 
-    void deserialize(std::ifstream& ifs) final
+    void deserialize(std::ifstream& ifs, std::enable_if_t<std::is_base_of_v<ISerializable, T>, int> = 0)
     {
-        clear();
+        this->clear();
         size_t temp;
 
         ifs.read((char*)&temp, sizeof(size_t));
         for (size_t i = 0; i < temp; i++)
         {
-            Message message;
-            message.deserialize(ifs);
-            add(message);
+            T value;
+            value.deserialize(ifs);
+            this->add(value);
         }
     }
 
-    void serialize_debug(std::ofstream& ofs) const final
+    void serialize_debug(std::ofstream& ofs, std::enable_if_t<std::is_base_of_v<ISerializableDebug, T>, int> = 0) const
     {
-        ofs << getSize() << '\n';
-        const Node* current = peekNode();
+        ofs << this->getSize() << '\n';
+        const typename LinkedList<T>::Node* current = this->peekNode();
         while (current != nullptr)
         {
             current->value.serialize_debug(ofs);
@@ -48,18 +47,18 @@ public:
         }
     }
 
-    void deserialize_debug(std::ifstream& ifs) final
+    void deserialize_debug(std::ifstream& ifs, std::enable_if_t<std::is_base_of_v<ISerializableDebug, T>, int> = 0)
     {
-        clear();
+        this->clear();
 
         size_t temp;
         ifs >> temp;
         ifs.ignore();
         for (size_t i = 0; i < temp; i++)
         {
-            Message message;
-            message.deserialize_debug(ifs);
-            add(message);
+            T value;
+            value.deserialize_debug(ifs);
+            this->add(value);
         }
     }
 };
