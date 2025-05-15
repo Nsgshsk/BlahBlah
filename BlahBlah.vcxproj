@@ -165,10 +165,12 @@
         <ClInclude Include="Chat.h"/>
         <ClInclude Include="HashManager.h"/>
         <ClInclude Include="ISerializable.h"/>
-        <ClInclude Include="LinkedList.hpp"/>
+        <ClInclude Include="LinkedList.hpp.deprecated" />
+        <ClInclude Include="List.hpp" />
         <ClInclude Include="MD5.h"/>
         <ClInclude Include="Message.h"/>
-        <ClInclude Include="SerializableList.hpp"/>
+        <ClInclude Include="SerializableLinkedList.hpp.deprecated" />
+        <ClInclude Include="SerializableList.hpp" />
         <ClInclude Include="UserBase.h" />
     </ItemGroup>
     <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
