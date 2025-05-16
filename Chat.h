@@ -1,36 +1,27 @@
 ﻿#pragma once
 #include "Message.h"
+#include "SerializableList.hpp"
+#include "UserBase.h"
 
-class Chat
+class Chat final : public ISerializable, public ISerializableDebug
 {
-    char id_[16];
-    char** participants_;
-    Message* messages_;
+    uint8_t hash_[HASH_LENGTH];
+    SerializableList<UserBase> participants_;
+    SerializableList<Message> messages_;
 
-    void generateId();
-
-    void copyParticipants(const char* const* participants);
-    void copyMessages(const Message* messages);
-
-    void copyFrom(const Chat& chat);
-    void moveFrom(Chat&& chat);
-
-    void deleteParticipants();
-    void deleteMessages();
-    void free();
+    void generateHash();
 
 public:
     Chat();
-    Chat(const char* const* participants);
-    Chat(const Chat& other);
-    Chat& operator=(const Chat& other);
-    ~Chat();
+    Chat(const SerializableList<UserBase>& participants);
 
-    Chat(Chat&& other) noexcept;
-    Chat& operator=(Chat&& other) noexcept;
+    const uint8_t* getHash() const;
 
-    const char* getId() const;
-    const char* getParticipants() const;
+    void serialize(std::ofstream& ofs) const override;
+    void deserialize(std::ifstream& ifs) override;
+
+    void serialize_debug(std::ofstream& ofs) const override;
+    void deserialize_debug(std::ifstream& ifs) override;
 
     friend std::ostream& operator<<(std::ostream& os, const Chat& chat);
 };

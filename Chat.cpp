@@ -1,114 +1,59 @@
 ﻿#include "Chat.h"
-#include <stdexcept>
+#include "HashManager.h"
 
-namespace
+void Chat::generateHash()
 {
-    size_t participantsCount(const char* const* participants)
-    {
-        size_t count = 0;
-        while (*participants != nullptr)
-            count++;
+    String message_representation;
+    for (size_t i = 0; i < participants_.getSize(); i++)
+        message_representation += participants_[i].getName();
 
-        return count;
-    }
-
-    size_t messagesCount(const Message* messages)
-    {
-        size_t count = 0;
-        while (messages != nullptr)
-            count++;
-
-        return count;
-    }
+    const uint8_t* temp = HashManager::hash_chat(message_representation.c_str());
+    HashManager::copy_hash(hash_, temp);
 }
 
-void Chat::generateId()
-{
-    throw std::exception("Not implemented");
-}
-
-void Chat::copyParticipants(const char* const* participants)
-{
-    size_t count = participantsCount(participants);
-    this->participants_ = new char*[count + 1]{nullptr};
-    for (size_t i = 0; i < count; i++)
-    {
-        const char* temp = participants[i]; // This is a participant's name
-        size_t tempLength = strlen(temp);
-        this->participants_[i] = new char[tempLength + 1];
-        strcpy_s(this->participants_[i], tempLength + 1, temp);
-    }
-}
-
-void Chat::copyMessages(const Message* messages)
-{
-    size_t count = messagesCount(messages);
-    throw std::exception("Not implemented");
-}
-
-void Chat::deleteParticipants()
+Chat::Chat() : hash_{0}
 {
 }
 
-void Chat::deleteMessages()
+Chat::Chat(const SerializableList<UserBase>& participants) : hash_{}
 {
+    participants_ = participants;
+    generateHash();
 }
 
-void Chat::copyFrom(const Chat& chat)
+const uint8_t* Chat::getHash() const
 {
-    strcpy_s(this->id_, chat.id_);
-    copyParticipants(chat.participants_);
+    return hash_;
 }
 
-void Chat::moveFrom(Chat&& chat)
+void Chat::serialize(std::ofstream& ofs) const
 {
+    this->participants_.serialize(ofs);
+    this->messages_.serialize(ofs);
 }
 
-void Chat::free()
+void Chat::deserialize(std::ifstream& ifs)
 {
+    this->participants_.deserialize(ifs);
+    this->messages_.deserialize(ifs);
 }
 
-Chat::Chat()
+void Chat::serialize_debug(std::ofstream& ofs) const
 {
+    this->participants_.serialize_debug(ofs);
+    this->messages_.serialize_debug(ofs);
 }
 
-Chat::Chat(const char* const* participants)
+void Chat::deserialize_debug(std::ifstream& ifs)
 {
-}
-
-Chat::Chat(const Chat& other)
-{
-}
-
-Chat& Chat::operator=(const Chat& other)
-{
-    return *this;
-}
-
-Chat::~Chat()
-{
-}
-
-Chat::Chat(Chat&& other)
-{
-}
-
-Chat& Chat::operator=(Chat&& other)
-{
-    return *this;
-}
-
-const char* Chat::getId() const
-{
-    return this->id_;
-}
-
-const char* Chat::getParticipants() const
-{
-    return participants_[0];
+    this->participants_.deserialize_debug(ifs);
+    this->messages_.deserialize_debug(ifs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Chat& chat)
 {
+    os << chat.participants_ << '\n';
+    os << chat.messages_ << '\n';
+
     return os;
 }
