@@ -5,10 +5,14 @@ void Chat::generateHash()
 {
     String message_representation;
     for (size_t i = 0; i < participants_.getSize(); i++)
+    {
         message_representation += participants_[i].getName();
+        message_representation += HashManager::hash_to_str(participants_[i].getHash());
+    }
 
     const uint8_t* temp = HashManager::hash_chat(message_representation.c_str());
     HashManager::copy_hash(hash_, temp);
+    delete[] temp;
 }
 
 Chat::Chat() : hash_{0}
@@ -28,6 +32,7 @@ const uint8_t* Chat::getHash() const
 
 void Chat::serialize(std::ofstream& ofs) const
 {
+    ofs.write((const char*)&hash_, HASH_LENGTH);
     this->participants_.serialize(ofs);
     this->messages_.serialize(ofs);
 }

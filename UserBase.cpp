@@ -25,6 +25,11 @@ const String& UserBase::getName() const
     return name_;
 }
 
+const uint8_t* UserBase::getHash() const
+{
+    return hash_;
+}
+
 bool UserBase::operator==(const UserBase& other) const
 {
     for (size_t i = 0; i < HASH_LENGTH; i++)
