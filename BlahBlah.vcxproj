@@ -159,6 +159,7 @@
         <ClCompile Include="HashManager.cpp"/>
         <ClCompile Include="MD5.cpp"/>
         <ClCompile Include="Message.cpp"/>
+        <ClCompile Include="String.cpp"/>
         <ClCompile Include="UserBase.cpp" />
     </ItemGroup>
     <ItemGroup>
@@ -171,6 +172,7 @@
         <ClInclude Include="Message.h"/>
         <ClInclude Include="SerializableLinkedList.hpp.deprecated" />
         <ClInclude Include="SerializableList.hpp" />
+        <ClInclude Include="String.h"/>
         <ClInclude Include="UserBase.h" />
     </ItemGroup>
     <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
