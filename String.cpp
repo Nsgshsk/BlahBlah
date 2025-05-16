@@ -19,6 +19,7 @@ void String::moveFrom(String&& other)
 void String::free()
 {
     delete[] data_;
+    data_ = nullptr;
     capacity_ = 0;
 }
 
@@ -106,17 +107,28 @@ String& String::operator=(String&& other) noexcept
 
 const char& String::operator[](size_t index) const
 {
+    if (index >= capacity_)
+        throw std::out_of_range("Index is out of range");
+
     return data_[index];
 }
 
 char& String::operator[](size_t index)
 {
+    if (index >= capacity_)
+        throw std::out_of_range("Index is out of range");
+
     return data_[index];
 }
 
 size_t String::length() const
 {
     return strlen(data_);
+}
+
+bool String::isEmpty() const
+{
+    return length() == 0;
 }
 
 void String::reverse()

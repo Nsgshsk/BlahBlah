@@ -26,6 +26,7 @@ public:
     char& operator[](size_t index);
 
     size_t length() const;
+    bool isEmpty() const;
 
     void reverse();
     const char* c_str() const;
