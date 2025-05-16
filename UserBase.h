@@ -3,28 +3,22 @@
 #include <cstdint>
 
 #include "ISerializable.h"
+#include "String.h"
 
 constexpr uint8_t HASH_LENGTH = 16;
 
 class UserBase : public ISerializable, public ISerializableDebug
 {
     uint8_t hash_[HASH_LENGTH];
-    char* name_;
+    String name_;
 
-    void copyFrom(const uint8_t* hash, const char* name);
-    void copyFrom(const UserBase& other);
-    void moveFrom(UserBase&& other);
-    void free();
 public:
     UserBase();
+    UserBase(const uint8_t* hash, const String& name);
     UserBase(const uint8_t* hash, const char* name);
-    UserBase(const UserBase& other);
-    UserBase& operator=(const UserBase& other);
-    ~UserBase() override;
-    
-    UserBase(UserBase&& other) noexcept;
-    UserBase& operator=(UserBase&& other) noexcept;
 
+    const String& getName() const;
+    const uint8_t* getHash() const;
     bool operator==(const UserBase& other) const;
 
     void serialize(std::ofstream& ofs) const override;
@@ -32,8 +26,8 @@ public:
 
     void serialize_debug(std::ofstream& ofs) const override;
     void deserialize_debug(std::ifstream& ifs) override;
+
+    friend std::ostream& operator<<(std::ostream& os, const UserBase& user);
 };
 
 bool operator!=(const UserBase& lhs, const UserBase& rhs);
-
-

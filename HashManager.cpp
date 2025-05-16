@@ -29,6 +29,16 @@ namespace
 
         return prep;
     }
+
+    char hex_to_char(unsigned char c)
+    {
+        if (c <= 9)
+            return (char)(c + '0');
+        if (10 <= c && c <= 15)
+            return (char)(c - 10 + 'a');
+        
+        return -1;
+    }
 }
 
 // Function takes the password string that is then appended with salt.
@@ -80,4 +90,26 @@ const unsigned char* HashManager::hash_chat(const char* chat)
     delete[] prep; // Freeing resources taken for salted string
 
     return hash; // Returning md5 hash
+}
+
+// Copies hash from source to destination
+void HashManager::copy_hash(unsigned char dest[HASH_SIZE], const unsigned char src[HASH_SIZE])
+{
+    for (int i = 0; i < HASH_SIZE; i++)
+        dest[i] = src[i];
+}
+
+const char* HashManager::hash_to_str(const unsigned char hash[HASH_SIZE])
+{
+    char* prep = new char[HASH_SIZE * 2 + 1];
+    for (uint8_t i = 0; i < HASH_SIZE; i++)
+    {
+        uint8_t curr = i * 2;
+        char ch = hex_to_char(hash[i] / 16);
+        prep[curr] = ch;
+        ch = hex_to_char(hash[i] % 16);
+        prep[curr + 1] = ch;
+    }
+    prep[(uint8_t)(HASH_SIZE * 2)] = '\0';
+    return prep;
 }
