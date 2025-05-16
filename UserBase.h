@@ -18,6 +18,7 @@ public:
     UserBase(const uint8_t* hash, const char* name);
 
     const String& getName() const;
+    const uint8_t* getHash() const;
     bool operator==(const UserBase& other) const;
 
     void serialize(std::ofstream& ofs) const override;
