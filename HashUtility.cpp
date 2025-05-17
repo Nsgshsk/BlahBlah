@@ -1,5 +1,5 @@
 ﻿#include "HashUtility.h"
-
+#include <fstream>
 #include <cstdint>
 #include <cstring>
 
@@ -12,7 +12,8 @@ namespace
     constexpr size_t SALT_LEN = 32;
     const char* PASSWORD_SALT = "SrHzaqyFkprv5fwsQsytVbjt9saQRFgh";
     const char* USER_SALT = "WEfgyK0vdeqyIHdeRfaWerFgiop2hfEr";
-    const char* CHAT_SALT = "AQwscg7rewYuiopGFES4schyrgjRFds";
+    const char* CHAT_SALT = "AQwscg7rewYuiopGFES4schyrgjRFds7";
+    const char* MESSAGE_SALT = "SrGYU753GHnjklPUfdwAscgfYjiJhGY1";
 
     // Function salts the provided string with the provided salt (aka appending them)
     const char* saltString(const char* str, const char* salt)
@@ -92,6 +93,23 @@ const unsigned char* HashUtility::hash_chat(const char* chat)
     return hash; // Returning md5 hash
 }
 
+// Function takes the message representation that is then appended with salt.
+// Function returns MD5 hash of the salted string
+//
+// !!!     Hash string is dynamically allocated    !!!
+// !!! You should deallocate it when done using it !!!
+const unsigned char* HashUtility::hash_message(const char* message)
+{
+    // Getting salted string
+    const char* prep = saltString(message, MESSAGE_SALT);
+
+    // Getting the md5 hash from salted string
+    const uint8_t* hash = calculate_md5(prep);
+    delete[] prep; // Freeing resources taken for salted string
+
+    return hash; // Returning md5 hash
+}
+
 // Copies hash from source to destination
 void HashUtility::copy_hash(unsigned char dest[HASH_SIZE], const unsigned char src[HASH_SIZE])
 {
@@ -99,6 +117,9 @@ void HashUtility::copy_hash(unsigned char dest[HASH_SIZE], const unsigned char s
         dest[i] = src[i];
 }
 
+// Converts hash to c_string
+// !!!   Result is dynamically allocated please   !!!
+// !!! You should deallocate it when dome with it !!!
 const char* HashUtility::hash_to_str(const unsigned char hash[HASH_SIZE])
 {
     char* prep = new char[HASH_SIZE * 2 + 1];
@@ -112,4 +133,20 @@ const char* HashUtility::hash_to_str(const unsigned char hash[HASH_SIZE])
     }
     prep[(uint8_t)(HASH_SIZE * 2)] = '\0';
     return prep;
+}
+
+void HashUtility::serialize_hash_text(std::ofstream& ofs, const unsigned char hash[16])
+{
+    ofs << std::hex;
+    for (uint8_t i = 0; i < HASH_SIZE - 1; i++)
+        ofs << hash[i] << ' ';
+    ofs << hash[HASH_SIZE - 1] << std::dec << '\n';
+}
+
+void HashUtility::deserialize_hash_text(std::ifstream& ifs, unsigned char hash[16])
+{
+    ifs >> std::hex;
+    for (uint8_t i = 0; i < HASH_SIZE; i++)
+        ifs >> hash[i];
+    ifs >> std::dec;
 }
