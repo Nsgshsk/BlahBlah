@@ -6,10 +6,11 @@ class String
     char* data_;
     size_t capacity_;
 
+    void copyFrom(const char* str);
     void copyFrom(const String& other);
     void moveFrom(String&& other);
     void free();
-    void resize(size_t newSize);
+    void resize(size_t minSize);
 
 public:
     String();

@@ -1,6 +1,21 @@
 ﻿#include "String.h"
 #include <iostream>
 
+void String::copyFrom(const char* str)
+{
+    if (str == nullptr)
+    {
+        capacity_ = 1;
+        data_ = new char[capacity_]{'\0'};
+    }
+    else
+    {
+        capacity_ = strlen(str) + 1;
+        data_ = new char[capacity_];
+        strcpy_s(data_, capacity_, str);
+    }
+}
+
 void String::copyFrom(const String& other)
 {
     capacity_ = other.capacity_;
@@ -23,13 +38,14 @@ void String::free()
     capacity_ = 0;
 }
 
-void String::resize(size_t newSize)
+void String::resize(size_t minSize)
 {
-    char* newData = new char[newSize];
-    strcpy_s(newData, newSize, data_);
+    minSize = std::max(minSize, capacity_ * 2);
+    char* newData = new char[minSize];
+    strcpy_s(newData, minSize, data_);
     free();
 
-    capacity_ = newSize;
+    capacity_ = minSize;
     data_ = newData;
 }
 
@@ -41,16 +57,7 @@ String::String()
 
 String::String(const char* str)
 {
-    if (str == nullptr)
-    {
-        capacity_ = 1;
-        data_ = new char[capacity_]{'\0'};
-    }
-    else
-    {
-        capacity_ = strlen(str) + 1;
-        data_ = new char[capacity_];
-    }
+    copyFrom(str);
 }
 
 String::String(const String& other)
@@ -71,17 +78,7 @@ String& String::operator=(const String& other)
 String& String::operator=(const char* str)
 {
     free();
-    if (str == nullptr)
-    {
-        capacity_ = 1;
-        data_ = new char[capacity_]{'\0'};
-    }
-    else
-    {
-        capacity_ = strlen(str) + 1;
-        data_ = new char[capacity_];
-        strcpy_s(data_, capacity_, str);
-    }
+    copyFrom(str);
     return *this;
 }
 
