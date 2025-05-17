@@ -156,7 +156,7 @@
     <ItemGroup>
         <ClCompile Include="BlahBlah.cpp"/>
         <ClCompile Include="Chat.cpp"/>
-        <ClCompile Include="HashManager.cpp"/>
+        <ClCompile Include="HashUtility.cpp"/>
         <ClCompile Include="MD5.cpp"/>
         <ClCompile Include="Message.cpp"/>
         <ClCompile Include="String.cpp"/>
@@ -164,7 +164,7 @@
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="Chat.h"/>
-        <ClInclude Include="HashManager.h"/>
+        <ClInclude Include="HashUtility.h"/>
         <ClInclude Include="ISerializable.h"/>
         <ClInclude Include="LinkedList.hpp.deprecated" />
         <ClInclude Include="List.hpp" />

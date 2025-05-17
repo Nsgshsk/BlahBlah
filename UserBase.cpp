@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "HashManager.h"
+#include "HashUtility.h"
 
 UserBase::UserBase() : hash_{0}, name_(nullptr)
 {
@@ -10,13 +10,13 @@ UserBase::UserBase() : hash_{0}, name_(nullptr)
 
 UserBase::UserBase(const uint8_t* hash, const String& name)
 {
-    HashManager::copy_hash(this->hash_, hash);
+    HashUtility::copy_hash(this->hash_, hash);
     name_ = name;
 }
 
 UserBase::UserBase(const uint8_t* hash, const char* name)
 {
-    HashManager::copy_hash(this->hash_, hash);
+    HashUtility::copy_hash(this->hash_, hash);
     name_ = name;
 }
 

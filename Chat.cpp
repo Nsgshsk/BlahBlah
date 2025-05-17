@@ -1,5 +1,5 @@
 ﻿#include "Chat.h"
-#include "HashManager.h"
+#include "HashUtility.h"
 
 void Chat::generateHash()
 {
@@ -7,11 +7,11 @@ void Chat::generateHash()
     for (size_t i = 0; i < participants_.getSize(); i++)
     {
         message_representation += participants_[i].getName();
-        message_representation += HashManager::hash_to_str(participants_[i].getHash());
+        message_representation += HashUtility::hash_to_str(participants_[i].getHash());
     }
 
-    const uint8_t* temp = HashManager::hash_chat(message_representation.c_str());
-    HashManager::copy_hash(hash_, temp);
+    const uint8_t* temp = HashUtility::hash_chat(message_representation.c_str());
+    HashUtility::copy_hash(hash_, temp);
     delete[] temp;
 }
 

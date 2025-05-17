@@ -1,4 +1,4 @@
-﻿#include "HashManager.h"
+﻿#include "HashUtility.h"
 
 #include <cstdint>
 #include <cstring>
@@ -36,7 +36,7 @@ namespace
             return (char)(c + '0');
         if (10 <= c && c <= 15)
             return (char)(c - 10 + 'a');
-        
+
         return -1;
     }
 }
@@ -46,7 +46,7 @@ namespace
 //
 // !!!     Hash string is dynamically allocated    !!!
 // !!! You should deallocate it when done using it !!!
-const unsigned char* HashManager::hash_password(const char* password)
+const unsigned char* HashUtility::hash_password(const char* password)
 {
     // Getting salted string
     const char* prep = saltString(password, PASSWORD_SALT);
@@ -63,7 +63,7 @@ const unsigned char* HashManager::hash_password(const char* password)
 //
 // !!!     Hash string is dynamically allocated    !!!
 // !!! You should deallocate it when done using it !!!
-const unsigned char* HashManager::hash_user(const char* user)
+const unsigned char* HashUtility::hash_user(const char* user)
 {
     // Getting salted string
     const char* prep = saltString(user, USER_SALT);
@@ -80,7 +80,7 @@ const unsigned char* HashManager::hash_user(const char* user)
 //
 // !!!     Hash string is dynamically allocated    !!!
 // !!! You should deallocate it when done using it !!!
-const unsigned char* HashManager::hash_chat(const char* chat)
+const unsigned char* HashUtility::hash_chat(const char* chat)
 {
     // Getting salted string
     const char* prep = saltString(chat, CHAT_SALT);
@@ -93,13 +93,13 @@ const unsigned char* HashManager::hash_chat(const char* chat)
 }
 
 // Copies hash from source to destination
-void HashManager::copy_hash(unsigned char dest[HASH_SIZE], const unsigned char src[HASH_SIZE])
+void HashUtility::copy_hash(unsigned char dest[HASH_SIZE], const unsigned char src[HASH_SIZE])
 {
     for (int i = 0; i < HASH_SIZE; i++)
         dest[i] = src[i];
 }
 
-const char* HashManager::hash_to_str(const unsigned char hash[HASH_SIZE])
+const char* HashUtility::hash_to_str(const unsigned char hash[HASH_SIZE])
 {
     char* prep = new char[HASH_SIZE * 2 + 1];
     for (uint8_t i = 0; i < HASH_SIZE; i++)

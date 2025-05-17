@@ -2,7 +2,7 @@
 
 constexpr unsigned char HASH_SIZE = 16;
 
-namespace HashManager
+namespace HashUtility
 {
     const unsigned char* hash_password(const char* password);
     const unsigned char* hash_user(const char* user);
