@@ -1,7 +1,7 @@
 ﻿#include "Chat.h"
 #include "HashUtility.h"
 
-void Chat::generateHash()
+void Chat::generate_hash()
 {
     String message_representation;
     for (size_t i = 0; i < participants_.getSize(); i++)
@@ -15,42 +15,82 @@ void Chat::generateHash()
     delete[] temp;
 }
 
-Chat::Chat() : hash_{0}
-{
-}
+Chat::Chat() = default;
 
-Chat::Chat(const SerializableList<UserBase>& participants) : hash_{}
+Chat::Chat(const SerializableList<UserBase>& participants)
 {
     participants_ = participants;
-    generateHash();
+    generate_hash();
 }
 
-const uint8_t* Chat::getHash() const
+const UserBase& Chat::getParticipant(int index) const
 {
-    return hash_;
+    return participants_[index];
+}
+
+const Message& Chat::getMessage(int index) const
+{
+    return messages_[index];
+}
+
+void Chat::addParticipant(const UserBase& participant)
+{
+    participants_.add(participant);
+}
+
+void Chat::removeParticipant(const UserBase& participant)
+{
+    for (size_t i = 0; i < participants_.getSize(); i++)
+        if (participants_[i] == participant)
+        {
+            participants_.removeAt(i);
+            return;
+        }
+
+    throw std::invalid_argument("Participant not found");
+}
+
+void Chat::sentMessage(const UserBase& sender, const String& message)
+{
+    messages_.add(Message(sender.getName(), message));
+}
+
+void Chat::deleteMessage(const Message& message)
+{
+    for (size_t i = 0; i < messages_.getSize(); i++)
+        if (messages_[i] == message)
+        {
+            messages_.removeAt(i);
+            return;
+        }
+
+    throw std::invalid_argument("Message not found");
 }
 
 void Chat::serialize(std::ofstream& ofs) const
 {
-    ofs.write((const char*)&hash_, HASH_LENGTH);
+    ofs.write((const char*)&hash_, HASH_SIZE);
     this->participants_.serialize(ofs);
     this->messages_.serialize(ofs);
 }
 
 void Chat::deserialize(std::ifstream& ifs)
 {
+    ifs.read((char*)&hash_, HASH_SIZE);
     this->participants_.deserialize(ifs);
     this->messages_.deserialize(ifs);
 }
 
 void Chat::serialize_debug(std::ofstream& ofs) const
 {
+    HashUtility::serialize_hash_text(ofs, hash_);
     this->participants_.serialize_debug(ofs);
     this->messages_.serialize_debug(ofs);
 }
 
 void Chat::deserialize_debug(std::ifstream& ifs)
 {
+    HashUtility::deserialize_hash_text(ifs, hash_);
     this->participants_.deserialize_debug(ifs);
     this->messages_.deserialize_debug(ifs);
 }
