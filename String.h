@@ -33,8 +33,9 @@ public:
     const char* c_str() const;
 
     String& operator+=(const String& other);
-    friend String operator+(const String& left, const String& right);
 
     friend std::ostream& operator<<(std::ostream& os, const String& other);
     friend std::istream& operator>>(std::istream& is, String& other);
 };
+
+String operator+(const String& left, const String& right);
