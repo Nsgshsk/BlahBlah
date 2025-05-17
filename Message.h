@@ -2,21 +2,23 @@
 #include <cstdint>
 #include <iosfwd>
 
+#include "Hashable.h"
 #include "ISerializable.h"
 #include "String.h"
 
 constexpr uint8_t DATE_TIME_MAX_SIZE = 32;
 
-class Message final : public ISerializable, public ISerializableDebug
+class Message final : public Hashable, public ISerializable, public ISerializableDebug
 {
     String sender_; // Sender's name
     // *Note: DateTime string ends with a newline character before terminating zero
     char dateTime_[DATE_TIME_MAX_SIZE + 1]; // DateTime string
     String message_; // Message text
 
+    void generate_hash() override;
+
 public:
     Message();
-    Message(const char* sender, const char* message);
     Message(const String& sender, const String& message);
 
     void serialize(std::ofstream& ofs) const override;

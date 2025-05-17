@@ -1,24 +1,22 @@
 ﻿#include "Message.h"
 #include <iostream>
 #include <fstream>
+
+#include "HashUtility.h"
 #pragma warning(disable:4996)
 
-Message::Message(): dateTime_{}
+void Message::generate_hash()
 {
+    String represent = sender_;
+    represent += dateTime_;
+    represent += message_;
+
+    const uint8_t* temp = HashUtility::hash_message(represent.c_str());
+    HashUtility::copy_hash(hash_, temp);
+    delete[] temp;
 }
 
-Message::Message(const char* sender, const char* message)
-{
-    // Setting message's sender
-    sender_ = sender;
-
-    // Setting current DateTime of message
-    std::time_t now = time(nullptr);
-    strcpy_s(this->dateTime_, ctime(&now));
-
-    // Setting current message text
-    message_ = message;
-}
+Message::Message() = default;
 
 Message::Message(const String& sender, const String& message)
 {
@@ -31,11 +29,16 @@ Message::Message(const String& sender, const String& message)
 
     // Setting current message text
     message_ = message;
+
+    // Generates message's hash
+    generate_hash();
 }
 
 // Serializes message into a binary file
 void Message::serialize(std::ofstream& ofs) const
 {
+    ofs.write((const char*)&hash_, HASH_SIZE);
+
     size_t temp = sender_.length();
     ofs.write((const char*)&temp, sizeof(size_t));
     ofs.write(sender_.c_str(), temp + 1);
@@ -50,6 +53,8 @@ void Message::serialize(std::ofstream& ofs) const
 // Deserializes message from a binary file
 void Message::deserialize(std::ifstream& ifs)
 {
+    ifs.read((char*)&hash_, HASH_SIZE);
+
     size_t temp; // Temporary variable for lengths
     char* str; // Temporary variable for strings
 
@@ -74,6 +79,9 @@ void Message::deserialize(std::ifstream& ifs)
 // Serializes message into a text file
 void Message::serialize_debug(std::ofstream& ofs) const
 {
+    // Serializes hash
+    HashUtility::serialize_hash_text(ofs, hash_);
+
     // Serializes sender string into text
     ofs << sender_.length() << '\n'; // Sender string length
     ofs << sender_ << '\n';
@@ -90,6 +98,9 @@ void Message::serialize_debug(std::ofstream& ofs) const
 // Deserializes message from text file
 void Message::deserialize_debug(std::ifstream& ifs)
 {
+    //Deserializes hash
+    HashUtility::deserialize_hash_text(ifs, hash_);
+
     ifs >> sender_;
 
     size_t temp; // Temporary variable for lengths
