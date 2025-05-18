@@ -17,18 +17,11 @@ void Message::generate_hash()
 
 Message::Message() = default;
 
-Message::Message(const String& sender, const String& message)
+Message::Message(String sender, String message) : sender_(std::move(sender)), message_(std::move(message))
 {
-    // Setting message's sender
-    sender_ = sender;
-
     // Setting current DateTime of message
     std::time_t now = time(nullptr);
     ctime_s(dateTime_, DATE_TIME_MAX_SIZE, &now);
-    //strcpy_s(this->dateTime_, ctime(&now));
-
-    // Setting current message text
-    message_ = message;
 
     // Generates message's hash
     generate_hash();

@@ -19,7 +19,7 @@ class Message final : public Hashable, public ISerializable, public ISerializabl
 
 public:
     Message();
-    Message(const String& sender, const String& message);
+    Message(String sender, String message);
 
     void serialize(std::ofstream& ofs) const override;
     void deserialize(std::ifstream& ifs) override;

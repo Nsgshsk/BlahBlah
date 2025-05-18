@@ -8,11 +8,12 @@
 
 class UserBase : public Hashable, public ISerializable, public ISerializableDebug
 {
+protected:
     String name_;
 
 public:
     UserBase();
-    UserBase(const uint8_t* hash, const String& name);
+    UserBase(String name);
 
     const String& getName() const;
 

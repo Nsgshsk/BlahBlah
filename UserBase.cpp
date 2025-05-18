@@ -5,10 +5,8 @@
 
 UserBase::UserBase() = default;
 
-UserBase::UserBase(const uint8_t* hash, const String& name)
+UserBase::UserBase(String name) : name_(std::move(name))
 {
-    HashUtility::copy_hash(this->hash_, hash);
-    name_ = name;
 }
 
 const String& UserBase::getName() const

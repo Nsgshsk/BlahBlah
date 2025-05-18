@@ -18,7 +18,7 @@ void SerializableList<T>::serialize(std::ofstream& ofs) const
     size_t size = this->getSize();
     ofs.write((const char*)&size, sizeof(size_t));
     for (size_t i = 0; i < size; i++)
-        (*this)[i].T::serialize(ofs);
+        (*this)[i].serialize(ofs);
 }
 
 template <class T>
@@ -27,12 +27,12 @@ void SerializableList<T>::deserialize(std::ifstream& ifs)
     this->clear();
 
     size_t size = this->getSize();
-    ifs.read((char*)&size, sizeof(size_t));;
+    ifs.read((char*)&size, sizeof(size_t));
     this->reserve(size);
     for (size_t i = 0; i < size; i++)
     {
         T value;
-        value.T::deserialize(ifs);
+        value.deserialize(ifs);
         this->add(value);
     }
 }
@@ -42,7 +42,7 @@ void SerializableList<T>::serialize_debug(std::ofstream& ofs) const
 {
     ofs << this->getSize() << '\n';
     for (size_t i = 0; i < this->getSize(); i++)
-        (*this)[i].T::serialize_debug(ofs);
+        (*this)[i].serialize_debug(ofs);
 }
 
 template <class T>
@@ -56,7 +56,7 @@ void SerializableList<T>::deserialize_debug(std::ifstream& ifs)
     for (size_t i = 0; i < size; i++)
     {
         T value;
-        value.T::deserialize_debug(ifs);
+        value.deserialize_debug(ifs);
         this->add(value);
     }
 }

@@ -3,61 +3,28 @@
 
 void User::generate_hash()
 {
-    char timebuff[DATE_TIME_MAX_SIZE]{'\0'};
-    std::time_t now = time(nullptr);
-    ctime_s(timebuff, DATE_TIME_MAX_SIZE, &now);
-
-    String represent = timebuff;
-    represent += getName();
-    represent += HashUtility::hash_to_str(password_hash_);
+    String represent = getName();
 
     const uint8_t* temp = HashUtility::hash_message(represent.c_str());
     HashUtility::copy_hash(hash_, temp);
     delete[] temp;
 }
 
-void User::serialize_connection(std::ofstream& ofs)
-{
-}
+User::User() = default;
 
-void User::deserialize_connection(std::ifstream& ifs)
+User::User(const String& username, const String& password) : UserBase(username)
 {
-}
-
-void User::serialize_connection()
-{
-}
-
-void User::deserialize_connection()
-{
-}
-
-void User::serialize_connection_debug(std::ofstream& ofs)
-{
-}
-
-void User::deserialize_connection_debug(std::ifstream& ifs)
-{
-}
-
-void User::serialize_connection_debug()
-{
-}
-
-void User::deserialize_connection_debug()
-{
-}
-
-User::User()
-{
-}
-
-User::User(const String& username, const String& password)
-{
+    const uint8_t* temp = HashUtility::hash_password(password.c_str());
+    HashUtility::copy_hash(hash_, temp);
+    User::generate_hash();
 }
 
 bool User::chat_present(const Chat& chat)
 {
+    for (size_t i = 0; i < chats_.getSize(); i++)
+        if (chats_[i] == chat)
+            return true;
+
     return false;
 }
 

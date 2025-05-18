@@ -1,7 +1,5 @@
 ﻿#pragma once
-#include "Chat.h"
-#include "SerializableList.hpp"
-#include "UserBase.h"
+#include "SerializableListSpecializations.hpp"
 
 class User : public UserBase
 {
@@ -10,16 +8,6 @@ class User : public UserBase
 
 protected:
     void generate_hash() override;
-
-    virtual void serialize_connection(std::ofstream& ofs);
-    virtual void deserialize_connection(std::ifstream& ifs);
-    void serialize_connection();
-    void deserialize_connection();
-
-    virtual void serialize_connection_debug(std::ofstream& ofs);
-    virtual void deserialize_connection_debug(std::ifstream& ifs);
-    void serialize_connection_debug();
-    void deserialize_connection_debug();
 
 public:
     User();
