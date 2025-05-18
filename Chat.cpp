@@ -1,9 +1,14 @@
 ﻿#include "Chat.h"
 #include "HashUtility.h"
+#include <ctime>
 
 void Chat::generate_hash()
 {
-    String message_representation;
+    char timebuff[DATE_TIME_MAX_SIZE]{'\0'};
+    std::time_t now = time(nullptr);
+    ctime_s(timebuff, DATE_TIME_MAX_SIZE, &now);
+
+    String message_representation = timebuff;
     for (size_t i = 0; i < participants_.getSize(); i++)
     {
         message_representation += participants_[i].getName();

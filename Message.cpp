@@ -3,7 +3,6 @@
 #include <fstream>
 
 #include "HashUtility.h"
-#pragma warning(disable:4996)
 
 void Message::generate_hash()
 {
@@ -25,7 +24,8 @@ Message::Message(const String& sender, const String& message)
 
     // Setting current DateTime of message
     std::time_t now = time(nullptr);
-    strcpy_s(this->dateTime_, ctime(&now));
+    ctime_s(dateTime_, DATE_TIME_MAX_SIZE, &now);
+    //strcpy_s(this->dateTime_, ctime(&now));
 
     // Setting current message text
     message_ = message;
@@ -43,7 +43,7 @@ void Message::serialize(std::ofstream& ofs) const
     ofs.write((const char*)&temp, sizeof(size_t));
     ofs.write(sender_.c_str(), temp + 1);
 
-    ofs.write(dateTime_, sizeof(dateTime_));
+    ofs.write(dateTime_, DATE_TIME_MAX_SIZE);
 
     temp = message_.length();
     ofs.write((const char*)&temp, sizeof(size_t));
@@ -66,7 +66,7 @@ void Message::deserialize(std::ifstream& ifs)
     delete[] str;
 
     // Datetime string deserialization from binary
-    ifs.read(dateTime_, sizeof(dateTime_));
+    ifs.read(dateTime_, DATE_TIME_MAX_SIZE);
 
     // Message string deserialization from text
     ifs.read((char*)&temp, sizeof(size_t)); // Message string length
