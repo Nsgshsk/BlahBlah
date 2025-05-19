@@ -171,6 +171,7 @@
         <ClInclude Include="ISerializable.h"/>
         <ClInclude Include="LinkedList.hpp.deprecated" />
         <ClInclude Include="List.hpp" />
+        <ClInclude Include="ListSpecialization.hpp" />
         <ClInclude Include="MD5.h"/>
         <ClInclude Include="Message.h"/>
         <ClInclude Include="SerializableLinkedList.hpp.deprecated" />
