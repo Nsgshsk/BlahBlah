@@ -74,14 +74,14 @@ void Chat::deleteMessage(const Message& message)
 
 void Chat::serialize(std::ofstream& ofs) const
 {
-    ofs.write((const char*)&hash_, HASH_SIZE);
+    ofs.write((const char*)hash_, HASH_SIZE);
     this->participants_.serialize(ofs);
     this->messages_.serialize(ofs);
 }
 
 void Chat::deserialize(std::ifstream& ifs)
 {
-    ifs.read((char*)&hash_, HASH_SIZE);
+    ifs.read((char*)hash_, HASH_SIZE);
     this->participants_.deserialize(ifs);
     this->messages_.deserialize(ifs);
 }

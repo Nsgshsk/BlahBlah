@@ -30,8 +30,6 @@ Message::Message(String sender, String message) : sender_(std::move(sender)), me
 // Serializes message into a binary file
 void Message::serialize(std::ofstream& ofs) const
 {
-    ofs.write((const char*)&hash_, HASH_SIZE);
-
     size_t temp = sender_.length();
     ofs.write((const char*)&temp, sizeof(size_t));
     ofs.write(sender_.c_str(), temp + 1);
@@ -46,8 +44,6 @@ void Message::serialize(std::ofstream& ofs) const
 // Deserializes message from a binary file
 void Message::deserialize(std::ifstream& ifs)
 {
-    ifs.read((char*)&hash_, HASH_SIZE);
-
     size_t temp; // Temporary variable for lengths
     char* str; // Temporary variable for strings
 
@@ -67,14 +63,13 @@ void Message::deserialize(std::ifstream& ifs)
     ifs.read(str, temp + 1);
     message_ = str;
     delete[] str;
+
+    generate_hash();
 }
 
 // Serializes message into a text file
 void Message::serialize_debug(std::ofstream& ofs) const
 {
-    // Serializes hash
-    HashUtility::serialize_hash_text(ofs, hash_);
-
     // Serializes sender string into text
     ofs << sender_.length() << '\n'; // Sender string length
     ofs << sender_ << '\n';
@@ -91,9 +86,6 @@ void Message::serialize_debug(std::ofstream& ofs) const
 // Deserializes message from text file
 void Message::deserialize_debug(std::ifstream& ifs)
 {
-    //Deserializes hash
-    HashUtility::deserialize_hash_text(ifs, hash_);
-
     ifs >> sender_;
 
     size_t temp; // Temporary variable for lengths
@@ -111,6 +103,8 @@ void Message::deserialize_debug(std::ifstream& ifs)
     ifs.getline(str, temp + 1);
     message_ = str;
     delete[] str;
+
+    generate_hash();
 }
 
 std::ostream& operator<<(std::ostream& os, const Message& message)

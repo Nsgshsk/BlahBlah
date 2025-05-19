@@ -16,7 +16,7 @@ const String& UserBase::getName() const
 
 void UserBase::serialize(std::ofstream& ofs) const
 {
-    ofs.write((const char*)&hash_, HASH_SIZE);
+    ofs.write((const char*)hash_, HASH_SIZE);
 
     size_t temp = name_.length();
     ofs.write((const char*)&temp, sizeof(size_t));
@@ -25,7 +25,7 @@ void UserBase::serialize(std::ofstream& ofs) const
 
 void UserBase::deserialize(std::ifstream& ifs)
 {
-    ifs.read((char*)&hash_, HASH_SIZE);
+    ifs.read((char*)hash_, HASH_SIZE);
 
     size_t temp;
     ifs.read((char*)&temp, sizeof(size_t));

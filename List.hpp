@@ -43,8 +43,8 @@ public:
     void pop();
     void clear();
 
-    void append(const List<T*>& list);
-    void append(List<T*>&& list) noexcept;
+    void append(const List& list);
+    void append(List&& list) noexcept;
     
     void reverse();
 
@@ -255,14 +255,14 @@ void List<T>::clear()
 }
 
 template <class T>
-void List<T>::append(const List<T*>& list)
+void List<T>::append(const List& list)
 {
     for (size_t i = 0; i < list.size_; i++)
         this->add(list[i]);
 }
 
 template <class T>
-void List<T>::append(List<T*>&& list) noexcept
+void List<T>::append(List&& list) noexcept
 {
     if (this == &list)
     {
