@@ -1,10 +1,19 @@
 ﻿#pragma once
-#include "SerializableListSpecializations.hpp"
+#include "Hashable.h"
+#include "ISerializable.h"
+#include "String.h"
+#include "List.hpp"
+#include "SharedPtr.hpp"
 
-class User : public UserBase
+class Chat;
+
+typedef SharedPtr<Chat> ChatPtr;
+
+class User : public Hashable, public ISerializable, public ISerializableDebug
 {
+    String name_;
     uint8_t password_hash_[HASH_SIZE];
-    SerializableList<Chat> chats_;
+    List<ChatPtr> chats_;
 
 protected:
     void generate_hash() override;
@@ -13,14 +22,14 @@ public:
     User();
     User(const String& username, const String& password);
 
-    bool chat_present(const Chat& chat);
+    bool chat_present(const ChatPtr& chat);
 
+    const String& getName() const;
     const Chat& operator[](size_t index) const;
     Chat& operator[](size_t index);
 
-    void create_chat(const User& participant);
-    void create_chat(const SerializableList<User>& participants);
-    void remove_chat(const Chat& chat);
+    void add_chat(const ChatPtr& chat);
+    void remove_chat(const ChatPtr& chat);
 
     void serialize(std::ofstream& ofs) const override;
     void deserialize(std::ifstream& ifs) override;

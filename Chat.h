@@ -1,26 +1,32 @@
 ﻿#pragma once
 #include "Message.h"
+#include "SharedPtr.hpp"
 #include "SerializableList.hpp"
-#include "UserBase.h"
+
+class User;
+
+typedef SharedPtr<User> UserPtr;
 
 class Chat final : public Hashable, public ISerializable, public ISerializableDebug
 {
-    SerializableList<UserBase> participants_;
+    List<UserPtr> participants_;
     SerializableList<Message> messages_;
 
     void generate_hash() override;
 
 public:
     Chat();
-    explicit Chat(const SerializableList<UserBase>& participants);
+    explicit Chat(const List<UserPtr>& participants);
 
-    const UserBase& getParticipant(int index) const;
-    const Message& getMessage(int index) const;
+    bool isParticipantPresent(const UserPtr& user) const;
+    
+    const User& getParticipant(size_t index) const;
+    const Message& getMessage(size_t index) const;
 
-    void addParticipant(const UserBase& participant);
-    void removeParticipant(const UserBase& participant);
+    void addParticipant(const UserPtr& participant);
+    void removeParticipant(const UserPtr& participant);
 
-    void sentMessage(const UserBase& sender, const String& message);
+    void sentMessage(const UserPtr& sender, const String& message);
     void deleteMessage(const Message& message);
 
     void serialize(std::ofstream& ofs) const override;
