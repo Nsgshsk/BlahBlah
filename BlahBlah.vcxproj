@@ -165,6 +165,7 @@
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="Chat.h"/>
+        <ClInclude Include="HashTable.hpp" />
         <ClInclude Include="HashUtility.h"/>
         <ClInclude Include="Hashable.h"/>
         <ClInclude Include="ISerializable.h"/>

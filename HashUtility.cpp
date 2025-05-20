@@ -135,7 +135,16 @@ const char* HashUtility::hash_to_str(const unsigned char hash[HASH_SIZE])
     return prep;
 }
 
-void HashUtility::serialize_hash_text(std::ofstream& ofs, const unsigned char hash[16])
+bool HashUtility::compare_hash(const unsigned char left[HASH_SIZE], const unsigned char right[HASH_SIZE])
+{
+    for (uint8_t i = 0; i < HASH_SIZE; i++)
+        if (left[i] != right[i])
+            return false;
+
+    return true;
+}
+
+void HashUtility::serialize_hash_text(std::ofstream& ofs, const unsigned char hash[HASH_SIZE])
 {
     ofs << std::hex;
     for (uint8_t i = 0; i < HASH_SIZE - 1; i++)
@@ -143,7 +152,7 @@ void HashUtility::serialize_hash_text(std::ofstream& ofs, const unsigned char ha
     ofs << hash[HASH_SIZE - 1] << std::dec << '\n';
 }
 
-void HashUtility::deserialize_hash_text(std::ifstream& ifs, unsigned char hash[16])
+void HashUtility::deserialize_hash_text(std::ifstream& ifs, unsigned char hash[HASH_SIZE])
 {
     ifs >> std::hex;
     for (uint8_t i = 0; i < HASH_SIZE; i++)
