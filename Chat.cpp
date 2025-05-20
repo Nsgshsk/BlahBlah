@@ -1,7 +1,7 @@
 ﻿#include <ctime>
 
 #include "Chat.h"
-#include "User.h"
+#include "UserBase.h"
 #include "HashUtility.h"
 
 void Chat::generate_hash()
@@ -13,7 +13,7 @@ void Chat::generate_hash()
     String message_representation = timebuff;
     for (size_t i = 0; i < participants_.getSize(); i++)
     {
-        const User& temp = getParticipant(i);
+        const UserBase& temp = participants_[i];
         message_representation += temp.getName();
         message_representation += HashUtility::hash_to_str(temp.getHash());
     }
@@ -25,24 +25,33 @@ void Chat::generate_hash()
 
 Chat::Chat() = default;
 
-Chat::Chat(const List<UserPtr>& participants)
+Chat::Chat(const List<UserBase>& participants)
 {
     participants_ = participants;
     generate_hash();
 }
 
-bool Chat::isParticipantPresent(const UserPtr& user) const
+bool Chat::isParticipantPresent(const UserBase& user) const
 {
     for (size_t i = 0; i < participants_.getSize(); i++)
-        if (getParticipant(i) == *user)
+        if (user == getParticipantHash(i))
             return true;
 
     return false;
 }
 
-const User& Chat::getParticipant(size_t index) const
+bool Chat::isParticipantPresent(const uint8_t user_hash[HASH_SIZE]) const
 {
-    return *participants_[index];
+    for (size_t i = 0; i < participants_.getSize(); i++)
+        if (HashUtility::compare_hash(participants_[i].getHash(), user_hash))
+            return true;
+
+    return false;
+}
+
+const uint8_t* Chat::getParticipantHash(size_t index) const
+{
+    return participants_[index].getHash();
 }
 
 const Message& Chat::getMessage(size_t index) const
@@ -50,21 +59,15 @@ const Message& Chat::getMessage(size_t index) const
     return messages_[index];
 }
 
-void Chat::addParticipant(const UserPtr& participant)
+void Chat::addParticipant(const UserBase& participant)
 {
-    if (participant == nullptr)
-        throw std::invalid_argument("Participant is null");
-    
     participants_.add(participant);
 }
 
-void Chat::removeParticipant(const UserPtr& participant)
+void Chat::removeParticipant(const UserBase& participant)
 {
-    if (participant == nullptr)
-        throw std::invalid_argument("participant is null");
-    
     for (size_t i = 0; i < participants_.getSize(); i++)
-        if (getParticipant(i) == *participant)
+        if (participant == getParticipantHash(i))
         {
             participants_.removeAt(i);
             return;
@@ -73,9 +76,9 @@ void Chat::removeParticipant(const UserPtr& participant)
     throw std::invalid_argument("Participant not found");
 }
 
-void Chat::sentMessage(const UserPtr& sender, const String& message)
+void Chat::sentMessage(const UserBase& sender, const String& message)
 {
-    messages_.add(Message(sender->getName(), message));
+    messages_.add(Message(sender.getName(), message));
 }
 
 void Chat::deleteMessage(const Message& message)
@@ -95,7 +98,7 @@ void Chat::serialize(std::ofstream& ofs) const
     ofs.write((const char*)hash_, HASH_SIZE);
 
     for (size_t i = 0; i < participants_.getSize(); i++)
-        ofs.write((const char*)getParticipant(i).getHash(), HASH_SIZE);
+        participants_[i].serialize_base(ofs);
     
     this->messages_.serialize(ofs);
 }
@@ -104,7 +107,12 @@ void Chat::deserialize(std::ifstream& ifs)
 {
     ifs.read((char*)hash_, HASH_SIZE);
 
-    // Function to deserialize hashes and put correct users
+    for (size_t i = 0; i < participants_.getSize(); i++)
+    {
+        UserBase temp;
+        temp.deserialize_base(ifs);
+        participants_.add(temp);
+    }
     
     this->messages_.deserialize(ifs);
 }
@@ -114,7 +122,7 @@ void Chat::serialize_debug(std::ofstream& ofs) const
     HashUtility::serialize_hash_text(ofs, hash_);
 
     for (size_t i = 0; i < participants_.getSize(); i++)
-        HashUtility::serialize_hash_text(ofs, getParticipant(i).getHash());
+        participants_[i].serialize_base_debug(ofs);
     
     this->messages_.serialize_debug(ofs);
 }
@@ -123,7 +131,12 @@ void Chat::deserialize_debug(std::ifstream& ifs)
 {
     HashUtility::deserialize_hash_text(ifs, hash_);
     
-    // Function to deserialize hashes and put correct users
+    for (size_t i = 0; i < participants_.getSize(); i++)
+    {
+        UserBase temp;
+        temp.deserialize_base_debug(ifs);
+        participants_.add(temp);
+    }
     
     this->messages_.deserialize_debug(ifs);
 }

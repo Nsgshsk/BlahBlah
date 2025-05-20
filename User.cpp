@@ -13,9 +13,8 @@ void User::generate_hash()
 
 User::User() = default;
 
-User::User(const String& username, const String& password)
+User::User(const String& username, const String& password) : UserBase(username)
 {
-    name_ = username;
     const uint8_t* temp = HashUtility::hash_password(password.c_str());
     HashUtility::copy_hash(hash_, temp);
     User::generate_hash();
@@ -28,11 +27,6 @@ bool User::chat_present(const ChatPtr& chat)
             return true;
 
     return false;
-}
-
-const String& User::getName() const
-{
-    return name_;
 }
 
 const Chat& User::operator[](size_t index) const

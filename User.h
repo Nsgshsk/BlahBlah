@@ -1,7 +1,6 @@
 ﻿#pragma once
-#include "Hashable.h"
+#include "UserBase.h"
 #include "ISerializable.h"
-#include "String.h"
 #include "List.hpp"
 #include "SharedPtr.hpp"
 
@@ -9,9 +8,8 @@ class Chat;
 
 typedef SharedPtr<Chat> ChatPtr;
 
-class User : public Hashable, public ISerializable, public ISerializableDebug
+class User : public UserBase, public ISerializable, public ISerializableDebug
 {
-    String name_;
     uint8_t password_hash_[HASH_SIZE];
     List<ChatPtr> chats_;
 
@@ -23,8 +21,7 @@ public:
     User(const String& username, const String& password);
 
     bool chat_present(const ChatPtr& chat);
-
-    const String& getName() const;
+    
     const Chat& operator[](size_t index) const;
     Chat& operator[](size_t index);
 
