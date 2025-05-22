@@ -14,7 +14,7 @@ class HashTable
         SerializableList<T> list;
     };
 
-    Bucket buckets[BUCKETS_NUM];
+    Bucket buckets_[BUCKETS_NUM];
 public:
     static size_t getBucketIndex(const uint8_t hash[HASH_SIZE])
     {
@@ -29,22 +29,33 @@ public:
     void add(const T& value)
     {
         size_t index = getBucketIndex(value.getHash());
-        buckets[index].list.add(value);
+        buckets_[index].list.add(value);
     }
 
     void remove(const uint8_t hash[HASH_SIZE])
     {
         size_t index = getBucketIndex(hash);
-        Bucket& bucket = buckets[index];
+        Bucket& bucket = buckets_[index];
         for (size_t i = 0; i < bucket.list.getSize(); i++)
             if (bucket.list[i] == hash)
                 bucket.list.removeAt(i);
     }
     
-    T* find(const uint8_t hash[HASH_SIZE]) const
+    const T* find(const uint8_t hash[HASH_SIZE]) const
     {
         size_t index = getBucketIndex(hash);
-        Bucket& bucket = buckets[index];
+        const Bucket& bucket = buckets_[index];
+        for (size_t i = 0; i < bucket.list.getSize(); i++)
+            if (bucket.list[i] == hash)
+                return &bucket.list[i];
+
+        return nullptr;
+    }
+
+    T* find(const uint8_t hash[HASH_SIZE])
+    {
+        size_t index = getBucketIndex(hash);
+        Bucket& bucket = buckets_[index];
         for (size_t i = 0; i < bucket.list.getSize(); i++)
             if (bucket.list[i] == hash)
                 return &bucket.list[i];
@@ -55,12 +66,12 @@ public:
     void serialize(std::ofstream& ofs) const
     {
         for (size_t i = 0; i < BUCKETS_NUM; i++)
-            buckets[i].list.serialize(ofs);
+            buckets_[i].list.serialize(ofs);
     }
 
     void serialize_debug(std::ofstream& ofs) const
     {
         for (size_t i = 0; i < BUCKETS_NUM; i++)
-            buckets[i].list.serialize_debug(ofs);
+            buckets_[i].list.serialize_debug(ofs);
     }
 };
