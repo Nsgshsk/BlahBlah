@@ -6,7 +6,7 @@ void User::generate_hash()
 {
     const String represent = getName();
 
-    const uint8_t* temp = HashUtility::hash_message(represent.c_str());
+    const uint8_t* temp = HashUtility::hash_user(represent.c_str());
     HashUtility::copy_hash(hash_, temp);
     delete[] temp;
 }
@@ -16,7 +16,7 @@ User::User() = default;
 User::User(const String& username, const String& password) : UserBase(username)
 {
     const uint8_t* temp = HashUtility::hash_password(password.c_str());
-    HashUtility::copy_hash(hash_, temp);
+    HashUtility::copy_hash(password_hash_, temp);
     User::generate_hash();
 }
 
@@ -28,15 +28,15 @@ const char* User::getCode() const
 bool User::chat_present(const ChatHash& chat)
 {
     for (size_t i = 0; i < chats_.getSize(); i++)
-        if (HashUtility::compare_hash(chats_[i], chat))
+        if (HashUtility::compare_hash(chats_[i].hash, chat.hash))
             return true;
 
     return false;
 }
 
-const ChatHash& User::operator[](size_t index) const
+const uint8_t* User::operator[](size_t index) const
 {
-    return chats_[index];
+    return chats_[index].hash;
 }
 
 void User::add_chat(const ChatHash& chat)
@@ -47,7 +47,7 @@ void User::add_chat(const ChatHash& chat)
 void User::remove_chat(const ChatHash& chat)
 {
     for (size_t i = 0; i < chats_.getSize(); i++)
-        if (HashUtility::compare_hash(chats_[i], chat))
+        if (HashUtility::compare_hash(chats_[i].hash, chat.hash))
             chats_.removeAt(i);
 }
 
@@ -92,7 +92,7 @@ void User::serialize_debug(std::ofstream& ofs) const
     HashUtility::serialize_hash_text(ofs, password_hash_);
 
     for (size_t i = 0; i < chats_.getSize(); i++)
-        HashUtility::serialize_hash_text(ofs, chats_[i]);
+        HashUtility::serialize_hash_text(ofs, chats_[i].hash);
 }
 
 void User::deserialize_debug(std::ifstream& ifs)
@@ -103,7 +103,7 @@ void User::deserialize_debug(std::ifstream& ifs)
     for (size_t i = 0; i < chats_.getSize(); i++)
     {
         ChatHash chat;
-        HashUtility::deserialize_hash_text(ifs, chat);
+        HashUtility::deserialize_hash_text(ifs, chat.hash);
         chats_.add(chat);
     }
 
@@ -112,6 +112,6 @@ void User::deserialize_debug(std::ifstream& ifs)
 
 std::ostream& operator<<(std::ostream& os, const User& user)
 {
-    throw std::exception("Not implemented");
+    os << user.name_ << '\n';
     return os;
 }

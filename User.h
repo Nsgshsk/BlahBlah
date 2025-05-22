@@ -7,12 +7,16 @@
 class Chat;
 
 typedef SharedPtr<Chat> ChatPtr;
-typedef uint8_t ChatHash[HASH_SIZE];
 
 class User : public UserBase, public ISerializable, public ISerializableDebug
 {
+    struct ChatHash
+    {
+        uint8_t hash[HASH_SIZE];
+    };
+    
     uint8_t password_hash_[HASH_SIZE];
-    List<const ChatHash> chats_;
+    List<ChatHash> chats_;
 
 protected:
     void generate_hash() override;
@@ -24,7 +28,7 @@ public:
     virtual const char* getCode() const;
     bool chat_present(const ChatHash& chat);
     
-    const ChatHash& operator[](size_t index) const;
+    const uint8_t* operator[](size_t index) const;
 
     void add_chat(const ChatHash& chat);
     void remove_chat(const ChatHash& chat);
