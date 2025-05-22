@@ -154,8 +154,10 @@
         </Link>
     </ItemDefinitionGroup>
     <ItemGroup>
+        <ClCompile Include="Admin.cpp" />
         <ClCompile Include="BlahBlah.cpp"/>
         <ClCompile Include="Chat.cpp"/>
+        <ClCompile Include="DataRepository.cpp" />
         <ClCompile Include="HashUtility.cpp"/>
         <ClCompile Include="Hashable.cpp"/>
         <ClCompile Include="MD5.cpp"/>
@@ -165,7 +167,9 @@
         <ClCompile Include="UserBase.cpp" />
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="Admin.h" />
         <ClInclude Include="Chat.h"/>
+        <ClInclude Include="DataRepository.h" />
         <ClInclude Include="HashTable.hpp" />
         <ClInclude Include="HashUtility.h"/>
         <ClInclude Include="Hashable.h"/>
