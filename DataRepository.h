@@ -21,6 +21,6 @@ public:
     void addChat(Chat& chat);
     void removeChat(Chat& chat);
 
-    User* getUser(uint8_t hash[HASH_SIZE]);
-    Chat* getChat(uint8_t hash[HASH_SIZE]);
+    User* getUser(const uint8_t hash[HASH_SIZE]) const;
+    Chat* getChat(const uint8_t hash[HASH_SIZE]) const;
 };
