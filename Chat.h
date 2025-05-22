@@ -3,6 +3,7 @@
 #include "SerializableList.hpp"
 
 class UserBase;
+typedef uint8_t UserHash[HASH_SIZE];
 
 class Chat final : public Hashable, public ISerializable, public ISerializableDebug
 {
@@ -16,13 +17,14 @@ public:
     explicit Chat(const List<UserBase>& participants);
 
     bool isParticipantPresent(const UserBase& user) const;
-    bool isParticipantPresent(const uint8_t user_hash[HASH_SIZE]) const;
+    bool isParticipantPresent(const UserHash& user_hash) const;
     
-    const uint8_t* getParticipantHash(size_t index) const;
-    const Message& getMessage(size_t index) const;
+    const List<UserBase>& getParticipants() const;
+    const List<Message>& getMessages() const;
 
     void addParticipant(const UserBase& participant);
     void removeParticipant(const UserBase& participant);
+    void removeParticipant(const UserHash& participant_hash);
 
     void sentMessage(const UserBase& sender, const String& message);
     void deleteMessage(const Message& message);

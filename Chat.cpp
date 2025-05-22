@@ -34,29 +34,29 @@ Chat::Chat(const List<UserBase>& participants)
 bool Chat::isParticipantPresent(const UserBase& user) const
 {
     for (size_t i = 0; i < participants_.getSize(); i++)
-        if (user == getParticipantHash(i))
+        if (participants_[i] == user)
             return true;
 
     return false;
 }
 
-bool Chat::isParticipantPresent(const uint8_t user_hash[HASH_SIZE]) const
+bool Chat::isParticipantPresent(const UserHash& user_hash) const
 {
     for (size_t i = 0; i < participants_.getSize(); i++)
-        if (HashUtility::compare_hash(participants_[i].getHash(), user_hash))
+        if (participants_[i] == user_hash)
             return true;
 
     return false;
 }
 
-const uint8_t* Chat::getParticipantHash(size_t index) const
+const List<UserBase>& Chat::getParticipants() const
 {
-    return participants_[index].getHash();
+    return participants_;
 }
 
-const Message& Chat::getMessage(size_t index) const
+const List<Message>& Chat::getMessages() const
 {
-    return messages_[index];
+    return messages_;
 }
 
 void Chat::addParticipant(const UserBase& participant)
@@ -67,7 +67,19 @@ void Chat::addParticipant(const UserBase& participant)
 void Chat::removeParticipant(const UserBase& participant)
 {
     for (size_t i = 0; i < participants_.getSize(); i++)
-        if (participant == getParticipantHash(i))
+        if (participants_[i] == participant)
+        {
+            participants_.removeAt(i);
+            return;
+        }
+
+    throw std::invalid_argument("Participant not found");
+}
+
+void Chat::removeParticipant(const UserHash& participant_hash)
+{
+    for (size_t i = 0; i < participants_.getSize(); i++)
+        if (participants_[i] == participant_hash)
         {
             participants_.removeAt(i);
             return;
