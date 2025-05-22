@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <iostream>
 
-constexpr uint8_t DEFAULT_LIST_CAPACITY = 16;
+constexpr uint8_t DEFAULT_LIST_CAPACITY = 8;
 
 template<class T>
 class List
@@ -79,6 +79,7 @@ void List<T>::reorder_right(size_t pos)
 template <class T>
 void List<T>::copyFrom(const List& other)
 {
+    data_ = new T*[other.capacity_]{nullptr};
     for (size_t i = 0; i < other.size_; i++)
         data_[i] = new T(other[i]);
 
