@@ -60,12 +60,22 @@ void DataRepository::removeChat(Chat& chat)
     chats_.remove(chat.getHash());
 }
 
-User* DataRepository::getUser(const uint8_t hash[16]) const
+const User* DataRepository::getUser(const uint8_t hash[16]) const
 {
     return users_.find(hash);
 }
 
-Chat* DataRepository::getChat(const uint8_t hash[16]) const
+User* DataRepository::getUser(const uint8_t hash[16])
+{
+    return users_.find(hash);
+}
+
+const Chat* DataRepository::getChat(const uint8_t hash[16]) const
+{
+    return chats_.find(hash);
+}
+
+Chat* DataRepository::getChat(const uint8_t hash[16])
 {
     return chats_.find(hash);
 }
