@@ -7,11 +7,12 @@
 class Chat;
 
 typedef SharedPtr<Chat> ChatPtr;
+typedef uint8_t ChatHash[HASH_SIZE];
 
 class User : public UserBase, public ISerializable, public ISerializableDebug
 {
     uint8_t password_hash_[HASH_SIZE];
-    List<ChatPtr> chats_;
+    List<const ChatHash> chats_;
 
 protected:
     void generate_hash() override;
@@ -19,14 +20,14 @@ protected:
 public:
     User();
     User(const String& username, const String& password);
-
-    bool chat_present(const ChatPtr& chat);
     
-    const Chat& operator[](size_t index) const;
-    Chat& operator[](size_t index);
+    virtual const char* getCode() const;
+    bool chat_present(const ChatHash& chat);
+    
+    const ChatHash& operator[](size_t index) const;
 
-    void add_chat(const ChatPtr& chat);
-    void remove_chat(const ChatPtr& chat);
+    void add_chat(const ChatHash& chat);
+    void remove_chat(const ChatHash& chat);
 
     void serialize(std::ofstream& ofs) const override;
     void deserialize(std::ifstream& ifs) override;
