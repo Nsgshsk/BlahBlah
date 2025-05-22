@@ -80,6 +80,8 @@ void User::deserialize(std::ifstream& ifs)
         ifs.read((char*)&chat, HASH_SIZE);
         chats_.add(chat);
     }
+
+    generate_hash();
 }
 
 void User::serialize_debug(std::ofstream& ofs) const
@@ -104,6 +106,8 @@ void User::deserialize_debug(std::ifstream& ifs)
         HashUtility::deserialize_hash_text(ifs, chat);
         chats_.add(chat);
     }
+
+    generate_hash();
 }
 
 std::ostream& operator<<(std::ostream& os, const User& user)
