@@ -42,7 +42,7 @@ void Admin::generate_hash()
     String represent = getName();
     represent += code_;
 
-    const uint8_t* temp = HashUtility::hash_message(represent.c_str());
+    const uint8_t* temp = HashUtility::hash_user(represent.c_str());
     HashUtility::copy_hash(hash_, temp);
     delete[] temp;
 }
