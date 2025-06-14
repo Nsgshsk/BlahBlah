@@ -55,6 +55,12 @@ String::String()
     data_ = new char[capacity_]{'\0'};
 }
 
+String::String(char ch)
+{
+    capacity_ = 2;
+    data_ = new char[capacity_]{ch, '\0'};
+}
+
 String::String(const char* str)
 {
     copyFrom(str);
@@ -118,6 +124,13 @@ char& String::operator[](size_t index)
     return data_[index];
 }
 
+void String::clear()
+{
+    free();
+    capacity_ = 1;
+    data_ = new char[capacity_]{'\0'};
+}
+
 size_t String::length() const
 {
     return strlen(data_);
@@ -159,15 +172,41 @@ String operator+(const String& left, const String& right)
     return str += right;
 }
 
-std::ostream& operator<<(std::ostream& os, const String& other)
+std::ostream& operator<<(std::ostream& os, const String& str)
 {
-    return os << other.data_;
+    return os << str.data_;
 }
 
-std::istream& operator>>(std::istream& is, String& other)
+std::istream& operator>>(std::istream& is, String& str)
 {
-    size_t length;
-    is >> length;
-    other.resize(length + 1);
-    return is >> other.data_;
+    String temp;
+    while (is && is.peek() != ' ' && is.peek() != '\n')
+    {
+        char ch = '\0';
+        is.get(ch);
+        temp += ch;
+    }
+
+    if (is.fail())
+        temp.clear();
+
+    str = temp;
+
+    return is;
+}
+
+void String::getline(std::istream& is, String& str)
+{
+    String temp;
+    while (is && is.peek() != '\n')
+    {
+        char ch = '\0';
+        is.get(ch);
+        temp += ch;
+    }
+
+    if (is.fail())
+        temp.clear();
+
+    str = temp;
 }

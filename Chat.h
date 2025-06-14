@@ -7,6 +7,9 @@ typedef uint8_t UserHash[HASH_SIZE];
 
 class Chat final : public Hashable, public ISerializable, public ISerializableDebug
 {
+    mutable String chat_filename_;
+    void generate_chat_filename(bool debug) const;
+
     List<UserBase> participants_;
     SerializableList<Message> messages_;
 
@@ -18,7 +21,7 @@ public:
 
     bool isParticipantPresent(const UserBase& user) const;
     bool isParticipantPresent(const UserHash& user_hash) const;
-    
+
     const List<UserBase>& getParticipants() const;
     const List<Message>& getMessages() const;
 

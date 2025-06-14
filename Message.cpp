@@ -71,7 +71,6 @@ void Message::deserialize(std::ifstream& ifs)
 void Message::serialize_debug(std::ofstream& ofs) const
 {
     // Serializes sender string into text
-    ofs << sender_.length() << '\n'; // Sender string length
     ofs << sender_ << '\n';
 
     // Serializes datetime string into text
@@ -100,7 +99,7 @@ void Message::deserialize_debug(std::ifstream& ifs)
     ifs >> temp; // Message string length
     char* str = new char[temp + 1];
     ifs.ignore(); // Ignores the newline character
-    ifs.getline(str, temp + 1);
+    ifs.read(str, temp + 1);
     message_ = str;
     delete[] str;
 

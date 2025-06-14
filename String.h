@@ -14,6 +14,7 @@ class String
 
 public:
     String();
+    String(char ch);
     String(const char* str);
     String(const String& other);
     String& operator=(const String& other);
@@ -26,6 +27,8 @@ public:
     const char& operator[](size_t index) const;
     char& operator[](size_t index);
 
+    void clear();
+
     size_t length() const;
     bool isEmpty() const;
 
@@ -34,8 +37,10 @@ public:
 
     String& operator+=(const String& other);
 
-    friend std::ostream& operator<<(std::ostream& os, const String& other);
-    friend std::istream& operator>>(std::istream& is, String& other);
+    friend std::ostream& operator<<(std::ostream& os, const String& str);
+    friend std::istream& operator>>(std::istream& is, String& str);
+
+    static void getline(std::istream& is, String& str);
 };
 
 String operator+(const String& left, const String& right);

@@ -38,7 +38,6 @@ void UserBase::deserialize_base(std::ifstream& ifs)
 void UserBase::serialize_base_debug(std::ofstream& ofs) const
 {
     HashUtility::serialize_hash_text(ofs, hash_);
-    ofs << name_.length() << '\n';
     ofs << name_ << '\n';
 }
 

@@ -14,9 +14,13 @@ class User : public UserBase, public ISerializable, public ISerializableDebug
     {
         uint8_t hash[HASH_SIZE];
     };
-    
+
+    mutable String chats_filename_;
+
     uint8_t password_hash_[HASH_SIZE];
     List<ChatHash> chats_;
+
+    void generate_chats_filename(bool debug) const;
 
 protected:
     void generate_hash() override;
@@ -24,10 +28,10 @@ protected:
 public:
     User();
     User(const String& username, const String& password);
-    
+
     virtual const char* getCode() const;
     bool chat_present(const ChatHash& chat);
-    
+
     const uint8_t* operator[](size_t index) const;
 
     void add_chat(const ChatHash& chat);

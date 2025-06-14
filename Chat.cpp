@@ -4,6 +4,16 @@
 #include "UserBase.h"
 #include "HashUtility.h"
 
+constexpr char CHAT_FILENAME_PREFIX[] = "chat_";
+constexpr char FILE_EXTENSION[] = ".bin";
+constexpr char DEBUG_FILE_EXTENSION[] = ".debug.txt";
+
+void Chat::generate_chat_filename(bool debug = false) const
+{
+    chat_filename_ = CHAT_FILENAME_PREFIX;
+    chat_filename_ += debug ? DEBUG_FILE_EXTENSION : FILE_EXTENSION;
+}
+
 void Chat::generate_hash()
 {
     char timebuff[DATE_TIME_MAX_SIZE]{'\0'};
@@ -109,48 +119,91 @@ void Chat::serialize(std::ofstream& ofs) const
 {
     ofs.write((const char*)hash_, HASH_SIZE);
 
-    for (size_t i = 0; i < participants_.getSize(); i++)
-        participants_[i].serialize_base(ofs);
-    
-    this->messages_.serialize(ofs);
+    if (chat_filename_.isEmpty())
+        generate_chat_filename();
+
+    std::ofstream chat_ofs(chat_filename_.c_str(), std::ios::binary);
+    if (!chat_ofs.is_open())
+        throw std::runtime_error("Could not open chat file");
+
+    size_t temp = participants_.getSize();
+    chat_ofs.write((const char*)&temp, sizeof(size_t));
+    for (size_t i = 0; i < temp; i++)
+        participants_[i].serialize_base(chat_ofs);
+
+    this->messages_.serialize(chat_ofs);
+
+    chat_ofs.close();
 }
 
 void Chat::deserialize(std::ifstream& ifs)
 {
     ifs.read((char*)hash_, HASH_SIZE);
 
-    for (size_t i = 0; i < participants_.getSize(); i++)
+    if (chat_filename_.isEmpty())
+        generate_chat_filename();
+
+    std::ifstream chat_ifs(chat_filename_.c_str(), std::ios::binary);
+    if (!chat_ifs.is_open())
+        throw std::runtime_error("Could not open chat file");
+
+    size_t temp;
+    chat_ifs.read((char*)&temp, sizeof(size_t));
+    for (size_t i = 0; i < temp; i++)
     {
-        UserBase temp;
-        temp.deserialize_base(ifs);
-        participants_.add(temp);
+        UserBase user;
+        user.deserialize_base(chat_ifs);
+        participants_.add(user);
     }
-    
-    this->messages_.deserialize(ifs);
+
+    this->messages_.deserialize(chat_ifs);
+
+    chat_ifs.close();
 }
 
 void Chat::serialize_debug(std::ofstream& ofs) const
 {
     HashUtility::serialize_hash_text(ofs, hash_);
 
+    if (chat_filename_.isEmpty())
+        generate_chat_filename(true);
+
+    std::ofstream chat_ofs(chat_filename_.c_str(), std::ios::out | std::ios::beg);
+    if (!chat_ofs.is_open())
+        throw std::runtime_error("Could not open chat file");
+
+    chat_ofs << participants_.getSize() << '\n';
     for (size_t i = 0; i < participants_.getSize(); i++)
-        participants_[i].serialize_base_debug(ofs);
-    
-    this->messages_.serialize_debug(ofs);
+        participants_[i].serialize_base_debug(chat_ofs);
+
+    this->messages_.serialize_debug(chat_ofs);
+
+    chat_ofs.close();
 }
 
 void Chat::deserialize_debug(std::ifstream& ifs)
 {
     HashUtility::deserialize_hash_text(ifs, hash_);
-    
-    for (size_t i = 0; i < participants_.getSize(); i++)
+
+    if (chat_filename_.isEmpty())
+        generate_chat_filename(true);
+
+    std::ifstream chat_ifs(chat_filename_.c_str(), std::ios::in | std::ios::beg);
+    if (!chat_ifs.is_open())
+        throw std::runtime_error("Could not open chat file");
+
+    size_t temp;
+    chat_ifs >> temp;
+    for (size_t i = 0; i < temp; i++)
     {
-        UserBase temp;
-        temp.deserialize_base_debug(ifs);
-        participants_.add(temp);
+        UserBase user;
+        user.deserialize_base_debug(chat_ifs);
+        participants_.add(user);
     }
-    
-    this->messages_.deserialize_debug(ifs);
+
+    this->messages_.deserialize_debug(chat_ifs);
+
+    chat_ifs.close();
 }
 
 std::ostream& operator<<(std::ostream& os, const Chat& chat)
