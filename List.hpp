@@ -3,7 +3,7 @@
 
 constexpr uint8_t DEFAULT_LIST_CAPACITY = 8;
 
-template<class T>
+template <class T>
 class List
 {
     T** data_;
@@ -18,7 +18,7 @@ class List
     void free();
     void resize(size_t newSize);
     void resize();
-    
+
 public:
     List();
     List(const List& other);
@@ -45,7 +45,7 @@ public:
 
     void append(const List& list);
     void append(List&& list) noexcept;
-    
+
     void reverse();
 
     void reserve(size_t newCapacity);
@@ -105,8 +105,9 @@ void List<T>::free()
     for (size_t i = 0; i < capacity_; i++)
         if (data_[i] != nullptr)
             delete data_[i];
-    
-    delete[] data_;
+
+    if (capacity_ != 0)
+        delete[] data_;
     data_ = nullptr;
     size_ = 0;
     capacity_ = 0;
@@ -121,7 +122,7 @@ void List<T>::resize(size_t newSize)
 
     if (data_ != nullptr)
         delete[] data_;
-    
+
     data_ = newData;
     capacity_ = newSize;
 }
@@ -217,7 +218,7 @@ void List<T>::insertAt(size_t index, const T& item)
 {
     if (index >= size_)
         throw std::out_of_range("Index is out of range");
-    
+
     if (size_ + 1 > capacity_)
         resize();
 
@@ -270,10 +271,10 @@ void List<T>::append(List&& list) noexcept
         append(list);
         return;
     }
-    
+
     while (size_ + list.size_ > capacity_)
         resize();
-    
+
     for (size_t i = 0; i < list.size_; i++)
     {
         data_[size_ + i] = list.data_[i];

@@ -75,7 +75,7 @@ void User::serialize(std::ofstream& ofs) const
     if (chats_filename_.isEmpty())
         generate_chats_filename();
 
-    std::ofstream chats_ofs(chats_filename_.c_str(), std::ios::binary);
+    std::ofstream chats_ofs(chats_filename_.c_str(), std::ios::binary | std::ios::out | std::ios::beg);
     if (!chats_ofs.is_open())
         throw std::runtime_error("Could not open user_chats file");
 
@@ -98,10 +98,12 @@ void User::deserialize(std::ifstream& ifs)
 
     ifs.read((char*)password_hash_, HASH_SIZE);
 
+    generate_hash();
+
     if (chats_filename_.isEmpty())
         generate_chats_filename();
 
-    std::ifstream chats_ifs(chats_filename_.c_str(), std::ios::binary);
+    std::ifstream chats_ifs(chats_filename_.c_str(), std::ios::binary | std::ios::in | std::ios::beg);
     if (!chats_ifs.is_open())
         throw std::runtime_error("Could not open user_chats file");
 
@@ -114,8 +116,6 @@ void User::deserialize(std::ifstream& ifs)
     }
 
     chats_ifs.close();
-
-    generate_hash();
 }
 
 void User::serialize_debug(std::ofstream& ofs) const
@@ -143,6 +143,8 @@ void User::deserialize_debug(std::ifstream& ifs)
     ifs >> name_;
     HashUtility::deserialize_hash_text(ifs, password_hash_);
 
+    generate_hash();
+
     if (chats_filename_.isEmpty())
         generate_chats_filename(true);
 
@@ -160,8 +162,6 @@ void User::deserialize_debug(std::ifstream& ifs)
     }
 
     chats_ifs.close();
-
-    generate_hash();
 }
 
 std::ostream& operator<<(std::ostream& os, const User& user)

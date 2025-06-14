@@ -3,27 +3,43 @@
 
 class User;
 class Chat;
+class String;
 
 class DataRepository
 {
-    HashTable<User> users_;
-    HashTable<Chat> chats_;
+    HashTable<User>* users_;
+    HashTable<Chat>* chats_;
+
 public:
-    void saveData();
+    DataRepository();
+    DataRepository(const DataRepository& other) = delete;
+    DataRepository& operator=(const DataRepository& other) = delete;
+    ~DataRepository();
+
+    DataRepository(DataRepository&& other) = delete;
+    DataRepository& operator=(DataRepository&& other) = delete;
+
+    void saveData() const;
     void loadData();
-    
-    void saveDataDebug();
+
+    void saveDataDebug() const;
     void loadDataDebug();
 
-    void addUser(User& user);
-    void removeUser(User& user);
+    void addUser(const User& user);
+    void removeUser(const User& user);
 
-    void addChat(Chat& chat);
-    void removeChat(Chat& chat);
+    void addChat(const Chat& chat);
+    void removeChat(const Chat& chat);
 
     const User* getUser(const uint8_t hash[HASH_SIZE]) const;
     User* getUser(const uint8_t hash[HASH_SIZE]);
-    
+
+    const User* getUser(const String& username) const;
+    User* getUser(const String& username);
+
     const Chat* getChat(const uint8_t hash[HASH_SIZE]) const;
     Chat* getChat(const uint8_t hash[HASH_SIZE]);
+
+    const Chat* getChat(const String& username) const;
+    Chat* getChat(const String& username);
 };

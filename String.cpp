@@ -180,6 +180,9 @@ std::ostream& operator<<(std::ostream& os, const String& str)
 std::istream& operator>>(std::istream& is, String& str)
 {
     String temp;
+    if (is && (is.peek() == ' ' || is.peek() == '\n'))
+        is.ignore();
+
     while (is && is.peek() != ' ' && is.peek() != '\n')
     {
         char ch = '\0';

@@ -3,10 +3,10 @@
 #include "SerializableList.hpp"
 
 constexpr uint8_t BYTE_BITS = 8;
-constexpr uint8_t BUCKET_BYTES = 2;
+constexpr uint8_t BUCKET_BYTES = 1;
 constexpr int BUCKETS_NUM = 1 << BUCKET_BYTES * BYTE_BITS;
 
-template<class T>
+template <class T>
 class HashTable
 {
     struct Bucket
@@ -15,6 +15,7 @@ class HashTable
     };
 
     Bucket buckets_[BUCKETS_NUM];
+
 public:
     static size_t getBucketIndex(const uint8_t hash[HASH_SIZE])
     {
@@ -40,7 +41,7 @@ public:
             if (bucket.list[i] == hash)
                 bucket.list.removeAt(i);
     }
-    
+
     const T* find(const uint8_t hash[HASH_SIZE]) const
     {
         size_t index = getBucketIndex(hash);
@@ -69,9 +70,21 @@ public:
             buckets_[i].list.serialize(ofs);
     }
 
+    void deserialize(std::ifstream& ifs)
+    {
+        for (size_t i = 0; i < BUCKETS_NUM; i++)
+            buckets_[i].list.deserialize(ifs);
+    }
+
     void serialize_debug(std::ofstream& ofs) const
     {
         for (size_t i = 0; i < BUCKETS_NUM; i++)
             buckets_[i].list.serialize_debug(ofs);
+    }
+
+    void deserialize_debug(std::ifstream& ifs)
+    {
+        for (size_t i = 0; i < BUCKETS_NUM; i++)
+            buckets_[i].list.deserialize_debug(ifs);
     }
 };
