@@ -31,15 +31,15 @@ public:
     void addChat(const Chat& chat);
     void removeChat(const Chat& chat);
 
-    const User* getUser(const uint8_t hash[HASH_SIZE]) const;
-    User* getUser(const uint8_t hash[HASH_SIZE]);
+    const User& getUser(const uint8_t hash[HASH_SIZE]) const;
+    User& getUser(const uint8_t hash[HASH_SIZE]);
 
-    const User* getUser(const String& username) const;
-    User* getUser(const String& username);
+    const User& getUser(const String& username) const;
+    User& getUser(const String& username);
 
-    const Chat* getChat(const uint8_t hash[HASH_SIZE]) const;
-    Chat* getChat(const uint8_t hash[HASH_SIZE]);
+    const Chat& getChat(const uint8_t hash[HASH_SIZE]) const;
+    Chat& getChat(const uint8_t hash[HASH_SIZE]);
 
-    const Chat* getChat(const String& username) const;
-    Chat* getChat(const String& username);
+    const Chat& getChat(const String& username) const;
+    Chat& getChat(const String& username);
 };

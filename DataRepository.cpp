@@ -117,58 +117,74 @@ void DataRepository::removeChat(const Chat& chat)
     chats_->remove(chat.getHash());
 }
 
-const User* DataRepository::getUser(const uint8_t hash[16]) const
+const User& DataRepository::getUser(const uint8_t hash[16]) const
 {
-    return users_->find(hash);
+    const User* user = users_->find(hash);
+    if (user == nullptr)
+        throw std::invalid_argument("User not found");
+
+    return *user;
 }
 
-User* DataRepository::getUser(const uint8_t hash[16])
+User& DataRepository::getUser(const uint8_t hash[16])
 {
-    return users_->find(hash);
+    User* user = users_->find(hash);
+    if (user == nullptr)
+        throw std::invalid_argument("User not found");
+
+    return *user;
 }
 
-const User* DataRepository::getUser(const String& username) const
+const User& DataRepository::getUser(const String& username) const
 {
     const uint8_t* hash = HashUtility::hash_user(username.c_str());
-    const User* user = getUser(hash);
+    const User& user = getUser(hash);
     delete hash;
 
     return user;
 }
 
-User* DataRepository::getUser(const String& username)
+User& DataRepository::getUser(const String& username)
 {
     const uint8_t* hash = HashUtility::hash_user(username.c_str());
-    User* user = getUser(hash);
+    User& user = getUser(hash);
     delete hash;
 
     return user;
 }
 
 
-const Chat* DataRepository::getChat(const uint8_t hash[16]) const
+const Chat& DataRepository::getChat(const uint8_t hash[16]) const
 {
-    return chats_->find(hash);
+    const Chat* chat = chats_->find(hash);
+    if (chat == nullptr)
+        throw std::invalid_argument("Chat not found");
+
+    return *chat;
 }
 
-Chat* DataRepository::getChat(const uint8_t hash[16])
+Chat& DataRepository::getChat(const uint8_t hash[16])
 {
-    return chats_->find(hash);
+    Chat* chat = chats_->find(hash);
+    if (chat == nullptr)
+        throw std::invalid_argument("Chat not found");
+
+    return *chat;
 }
 
-const Chat* DataRepository::getChat(const String& username) const
+const Chat& DataRepository::getChat(const String& username) const
 {
     const uint8_t* hash = HashUtility::hash_user(username.c_str());
-    const Chat* chat = getChat(hash);
+    const Chat& chat = getChat(hash);
     delete hash;
 
     return chat;
 }
 
-Chat* DataRepository::getChat(const String& username)
+Chat& DataRepository::getChat(const String& username)
 {
     const uint8_t* hash = HashUtility::hash_user(username.c_str());
-    Chat* chat = getChat(hash);
+    Chat& chat = getChat(hash);
     delete hash;
 
     return chat;
