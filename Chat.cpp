@@ -14,6 +14,15 @@ void Chat::generate_chat_filename(bool debug = false) const
     chat_filename_ += debug ? DEBUG_FILE_EXTENSION : FILE_EXTENSION;
 }
 
+size_t Chat::getInvitationId(const UserBase& invitation) const
+{
+    for (size_t i = 0; i < pending_.getSize(); i++)
+        if (pending_[i] == invitation)
+            return i;
+
+    throw std::invalid_argument("Invitation does not exist");
+}
+
 void Chat::generate_hash()
 {
     char timebuff[DATE_TIME_MAX_SIZE]{'\0'};
@@ -35,10 +44,11 @@ void Chat::generate_hash()
 
 Chat::Chat() = default;
 
-Chat::Chat(const List<UserBase>& participants, ChatType type, const String& name)
+Chat::Chat(const List<UserBase>& participants, ChatType type, const UserHash& owner, const String& name)
 {
     participants_ = participants;
     type_ = type;
+    HashUtility::copy_hash(owner_, owner);
 
     size_t temp = participants_.getSize();
     if (name.isEmpty())
@@ -54,7 +64,7 @@ Chat::Chat(const List<UserBase>& participants, ChatType type, const String& name
     Chat::generate_hash();
 }
 
-bool Chat::isParticipantPresent(const UserBase& user) const
+bool Chat::hasParticipant(const UserBase& user) const
 {
     for (size_t i = 0; i < participants_.getSize(); i++)
         if (participants_[i] == user)
@@ -63,13 +73,48 @@ bool Chat::isParticipantPresent(const UserBase& user) const
     return false;
 }
 
-bool Chat::isParticipantPresent(const UserHash& user_hash) const
+bool Chat::hasParticipant(const UserHash& user_hash) const
 {
     for (size_t i = 0; i < participants_.getSize(); i++)
         if (participants_[i] == user_hash)
             return true;
 
     return false;
+}
+
+bool Chat::isOwner(const UserBase& user) const
+{
+    return user == owner_;
+}
+
+void Chat::setOwner(const UserBase& user)
+{
+    if (!hasParticipant(user))
+        throw std::exception("User isn't part of the chat");
+
+    HashUtility::copy_hash(owner_, user.getHash());
+}
+
+void Chat::switch_invitation_control()
+{
+    invitation_control_ = !invitation_control_;
+
+    if (!invitation_control_)
+        pending_.clear();
+}
+
+const List<UserBase>& Chat::get_pending_invitations() const
+{
+    return pending_;
+}
+
+void Chat::review_invitation(const UserBase& invitation, bool accepted)
+{
+    size_t id = getInvitationId(invitation);
+    if (accepted)
+        participants_.add(invitation);
+
+    pending_.removeAt(id);
 }
 
 const List<UserBase>& Chat::getParticipants() const
@@ -84,7 +129,13 @@ const List<Message>& Chat::getMessages() const
 
 void Chat::addParticipant(const UserBase& participant)
 {
-    participants_.add(participant);
+    if (hasParticipant(participant))
+        throw std::invalid_argument("Participant already exists");
+
+    if (!invitation_control_)
+        participants_.add(participant);
+    else
+        pending_.add(participant);
 }
 
 void Chat::removeParticipant(const UserBase& participant)
@@ -113,6 +164,9 @@ void Chat::removeParticipant(const UserHash& participant_hash)
 
 void Chat::sentMessage(const UserBase& sender, const String& message)
 {
+    if (!hasParticipant(sender))
+        throw std::runtime_error("Participant isn't part of the chat");
+
     messages_.add(Message(sender.getName(), message));
 }
 
@@ -150,6 +204,15 @@ void Chat::serialize(std::ofstream& ofs) const
     for (size_t i = 0; i < temp; i++)
         participants_[i].serialize_base(chat_ofs);
 
+    chat_ofs.write((const char*)&invitation_control_, sizeof(bool));
+    if (invitation_control_)
+    {
+        temp = pending_.getSize();
+        chat_ofs.write((const char*)&temp, sizeof(size_t));
+        for (size_t i = 0; i < temp; i++)
+            pending_[i].serialize_base(chat_ofs);
+    }
+
     this->messages_.serialize(chat_ofs);
 
     chat_ofs.close();
@@ -183,6 +246,14 @@ void Chat::deserialize(std::ifstream& ifs)
         participants_.add(user);
     }
 
+    chat_ifs.read((char*)&invitation_control_, sizeof(bool));
+    if (invitation_control_)
+    {
+        chat_ifs.read((char*)&temp, sizeof(size_t));
+        for (size_t i = 0; i < temp; i++)
+            pending_[i].deserialize_base(chat_ifs);
+    }
+
     this->messages_.deserialize(chat_ifs);
 
     chat_ifs.close();
@@ -205,6 +276,14 @@ void Chat::serialize_debug(std::ofstream& ofs) const
     chat_ofs << participants_.getSize() << '\n';
     for (size_t i = 0; i < participants_.getSize(); i++)
         participants_[i].serialize_base_debug(chat_ofs);
+
+    chat_ofs << invitation_control_ << '\n';
+    if (invitation_control_)
+    {
+        chat_ofs << pending_.getSize() << '\n';
+        for (size_t i = 0; i < pending_.getSize(); i++)
+            pending_[i].serialize_base_debug(chat_ofs);
+    }
 
     this->messages_.serialize_debug(chat_ofs);
 
@@ -241,6 +320,14 @@ void Chat::deserialize_debug(std::ifstream& ifs)
         participants_.add(user);
     }
 
+    chat_ifs >> invitation_control_;
+    if (invitation_control_)
+    {
+        chat_ifs >> temp;
+        for (size_t i = 0; i < temp; i++)
+            pending_[i].deserialize_base_debug(chat_ifs);
+    }
+
     this->messages_.deserialize_debug(chat_ifs);
 
     chat_ifs.close();
@@ -248,8 +335,13 @@ void Chat::deserialize_debug(std::ifstream& ifs)
 
 std::ostream& operator<<(std::ostream& os, const Chat& chat)
 {
-    os << chat.participants_ << '\n';
-    os << chat.messages_ << '\n';
+    os << chat.name_ << " | ";
+    if (chat.type_ == ChatType::DIRECT)
+        os << "Direct";
+    else if (chat.type_ == ChatType::GROUP)
+        os << "Group";
+    else
+        throw std::runtime_error("Could not deserialize chat");
 
     return os;
 }

@@ -225,6 +225,13 @@ void User::deserialize_debug(std::ifstream& ifs)
 
 std::ostream& operator<<(std::ostream& os, const User& user)
 {
-    os << user.getName() << '\n';
+    os << user.getName() << " | ";
+    if (user.role_ == UserRole::ADMIN)
+        os << "Admin";
+    else if (user.role_ == UserRole::MEMBER)
+        os << "Member";
+    else
+        throw std::runtime_error("Could not deserialize user");
+
     return os;
 }

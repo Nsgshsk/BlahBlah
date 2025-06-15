@@ -18,24 +18,36 @@ class Chat : public Hashable, public ISerializable, public ISerializableDebug
 
     String name_;
     ChatType type_;
+    UserHash owner_;
     List<UserBase> participants_;
+    bool invitation_control_;
+    List<UserBase> pending_;
     SerializableList<Message> messages_;
 
+    size_t getInvitationId(const UserBase& invitation) const;
     void generate_hash() override;
 
 public:
     Chat();
-    Chat(const List<UserBase>& participants, ChatType type, const String& name);
+    Chat(const List<UserBase>& participants, ChatType type,
+         const UserHash& owner, const String& name);
 
-    bool isParticipantPresent(const UserBase& user) const;
-    bool isParticipantPresent(const UserHash& user_hash) const;
+    bool hasParticipant(const UserBase& user) const;
+    bool hasParticipant(const UserHash& user_hash) const;
 
+    bool isOwner(const UserBase& user) const;
     const List<UserBase>& getParticipants() const;
     const List<Message>& getMessages() const;
 
     void addParticipant(const UserBase& participant);
     void removeParticipant(const UserBase& participant);
     void removeParticipant(const UserHash& participant_hash);
+
+    void setOwner(const UserBase& user);
+
+    void switch_invitation_control();
+    const List<UserBase>& get_pending_invitations() const;
+    void review_invitation(const UserBase& invitation, bool accepted);
 
     void sentMessage(const UserBase& sender, const String& message);
     void deleteMessage(const Message& message);

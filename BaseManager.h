@@ -6,12 +6,12 @@ class DataRepository;
 
 class BaseManager
 {
-    User* user_;
-    DataRepository* data_;
-
     void change_password_command(const String& old_password, const String& new_password) const;
 
 protected:
+    User* user_;
+    DataRepository* data_;
+
     void change_password_input() const;
 
     virtual void help_command() = 0;
