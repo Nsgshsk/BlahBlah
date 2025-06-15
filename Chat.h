@@ -5,11 +5,19 @@
 class UserBase;
 typedef uint8_t UserHash[HASH_SIZE];
 
-class Chat final : public Hashable, public ISerializable, public ISerializableDebug
+enum class ChatType
+{
+    DIRECT,
+    GROUP,
+};
+
+class Chat : public Hashable, public ISerializable, public ISerializableDebug
 {
     mutable String chat_filename_;
     void generate_chat_filename(bool debug) const;
 
+    String name_;
+    ChatType type_;
     List<UserBase> participants_;
     SerializableList<Message> messages_;
 
@@ -17,7 +25,7 @@ class Chat final : public Hashable, public ISerializable, public ISerializableDe
 
 public:
     Chat();
-    explicit Chat(const List<UserBase>& participants);
+    Chat(const List<UserBase>& participants, ChatType type, const String& name);
 
     bool isParticipantPresent(const UserBase& user) const;
     bool isParticipantPresent(const UserHash& user_hash) const;

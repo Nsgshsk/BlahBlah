@@ -21,6 +21,7 @@ class List
 
 public:
     List();
+    List(const T& item);
     List(const List& other);
     List& operator=(const List& other);
     ~List();
@@ -137,6 +138,12 @@ template <class T>
 List<T>::List() : size_(0), capacity_(DEFAULT_LIST_CAPACITY)
 {
     data_ = new T*[DEFAULT_LIST_CAPACITY]{nullptr};
+}
+
+template <class T>
+List<T>::List(const T& item) : List()
+{
+    add(item);
 }
 
 template <class T>

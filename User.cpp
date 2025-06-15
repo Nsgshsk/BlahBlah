@@ -57,6 +57,16 @@ bool User::checkPassword(const String& password) const
     return result;
 }
 
+void User::change_password(const String& old_password, const String& new_password)
+{
+    if (!checkPassword(old_password))
+        throw std::invalid_argument("Incorrect password");
+
+    const uint8_t* temp = HashUtility::hash_password(new_password.c_str());
+    HashUtility::copy_hash(password_hash_, temp);
+    delete[] temp;
+}
+
 bool User::chat_present(const ChatHash& chat)
 {
     for (size_t i = 0; i < chats_.getSize(); i++)

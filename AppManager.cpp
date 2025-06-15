@@ -20,11 +20,6 @@ void AppManager::login_command(const String& username, const String& password)
         if (!user.checkPassword(password))
             throw std::invalid_argument("Invalid username or password");
     }
-    catch (std::invalid_argument& e)
-    {
-        std::cout << e.what() << "\n";
-        std::cout << "Invalid username or password";
-    }
     catch (std::exception& e)
     {
         std::cout << e.what() << "\n";
@@ -35,6 +30,9 @@ void AppManager::register_command(const String& username, const String& password
 {
     try
     {
+        if (data_.hasUser(username))
+            throw std::invalid_argument("Username already taken");
+
         Member user(username, password);
         data_.addUser(user);
         std::cout << username << " registered successfully!\n";
@@ -48,9 +46,7 @@ void AppManager::register_command(const String& username, const String& password
 void AppManager::login_input()
 {
     String username, password;
-    std::cout << "Username: ";
     std::cin >> username;
-    std::cout << "Password: ";
     std::cin >> password;
 
     login_command(username, password);
@@ -59,9 +55,7 @@ void AppManager::login_input()
 void AppManager::register_input()
 {
     String username, password;
-    std::cout << "Username: ";
     std::cin >> username;
-    std::cout << "Password: ";
     std::cin >> password;
 
     register_command(username, password);
@@ -78,8 +72,10 @@ AppManager::AppManager()
         std::cout << e.what() << '\n' << '\n';
         std::cout << "Creating new database...\n";
         Admin admin("Admin", "0000");
-        data_.addUser(Admin("Admin", "0000"));
+        data_.addUser(admin);
         std::cout << "DEBUG: Admin code - " << admin.getCode() << '\n';
+        // This is the name with which you can interact with the admin in the app (like login, chatting, etc.)
+        std::cout << "DEBUG: Admin access name - " << admin.getName() << admin.getCode() << '\n';
         std::cout << "Database successfully created!\n";
     }
 }

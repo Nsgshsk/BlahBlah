@@ -117,6 +117,27 @@ void DataRepository::removeChat(const Chat& chat)
     chats_->remove(chat.getHash());
 }
 
+bool DataRepository::hasUser(const String& name) const
+{
+    const uint8_t* hash = HashUtility::hash_user(name.c_str());
+    bool exists = hasUser(hash);
+    delete hash;
+
+    return exists;
+}
+
+bool DataRepository::hasUser(const uint8_t hash[HASH_SIZE]) const
+{
+    const User* user = users_->find(hash);
+    return user != nullptr;
+}
+
+bool DataRepository::hasChat(const uint8_t hash[HASH_SIZE]) const
+{
+    const Chat* chat = chats_->find(hash);
+    return chat != nullptr;
+}
+
 const User& DataRepository::getUser(const uint8_t hash[16]) const
 {
     const User* user = users_->find(hash);

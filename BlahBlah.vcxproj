@@ -161,6 +161,8 @@
         <ClCompile Include="BlahBlah.cpp"/>
         <ClCompile Include="Chat.cpp"/>
         <ClCompile Include="DataRepository.cpp" />
+        <ClCompile Include="DirectChat.cpp"/>
+        <ClCompile Include="GroupChat.cpp"/>
         <ClCompile Include="HashUtility.cpp"/>
         <ClCompile Include="Hashable.cpp"/>
         <ClCompile Include="MD5.cpp"/>
@@ -178,6 +180,8 @@
         <ClInclude Include="BaseManager.h"/>
         <ClInclude Include="Chat.h"/>
         <ClInclude Include="DataRepository.h" />
+        <ClInclude Include="DirectChat.h"/>
+        <ClInclude Include="GroupChat.h"/>
         <ClInclude Include="HashTable.hpp" />
         <ClInclude Include="HashUtility.h"/>
         <ClInclude Include="Hashable.h"/>

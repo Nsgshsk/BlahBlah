@@ -31,6 +31,10 @@ public:
     void addChat(const Chat& chat);
     void removeChat(const Chat& chat);
 
+    bool hasUser(const String& name) const;
+    bool hasUser(const uint8_t hash[HASH_SIZE]) const;
+    bool hasChat(const uint8_t hash[HASH_SIZE]) const;
+
     const User& getUser(const uint8_t hash[HASH_SIZE]) const;
     User& getUser(const uint8_t hash[HASH_SIZE]);
 

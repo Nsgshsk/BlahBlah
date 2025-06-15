@@ -35,10 +35,23 @@ void Chat::generate_hash()
 
 Chat::Chat() = default;
 
-Chat::Chat(const List<UserBase>& participants)
+Chat::Chat(const List<UserBase>& participants, ChatType type, const String& name)
 {
     participants_ = participants;
-    generate_hash();
+    type_ = type;
+
+    size_t temp = participants_.getSize();
+    if (name.isEmpty())
+    {
+        for (size_t i = 0; i < temp - 1; i++)
+            name_ += participants_[i].getName() + ", ";
+
+        name_ += participants_[temp - 1].getName();
+    }
+    else
+        name_ = name;
+
+    Chat::generate_hash();
 }
 
 bool Chat::isParticipantPresent(const UserBase& user) const
@@ -126,7 +139,13 @@ void Chat::serialize(std::ofstream& ofs) const
     if (!chat_ofs.is_open())
         throw std::runtime_error("Could not open chat file");
 
-    size_t temp = participants_.getSize();
+    size_t temp = name_.length();
+    chat_ofs.write((const char*)&temp, sizeof(size_t));
+    chat_ofs.write(name_.c_str(), temp);
+
+    chat_ofs.write((const char*)&type_, sizeof(ChatType));
+
+    temp = participants_.getSize();
     chat_ofs.write((const char*)&temp, sizeof(size_t));
     for (size_t i = 0; i < temp; i++)
         participants_[i].serialize_base(chat_ofs);
@@ -148,6 +167,14 @@ void Chat::deserialize(std::ifstream& ifs)
         throw std::runtime_error("Could not open chat file");
 
     size_t temp;
+    chat_ifs.read((char*)&temp, sizeof(size_t));
+    char* str = new char[temp + 1];
+    chat_ifs.read(str, temp + 1);
+    name_ = str;
+    delete[] str;
+
+    chat_ifs.read((char*)&type_, sizeof(ChatType));
+
     chat_ifs.read((char*)&temp, sizeof(size_t));
     for (size_t i = 0; i < temp; i++)
     {
@@ -172,6 +199,9 @@ void Chat::serialize_debug(std::ofstream& ofs) const
     if (!chat_ofs.is_open())
         throw std::runtime_error("Could not open chat file");
 
+    chat_ofs << name_ << '\n';
+    chat_ofs << (int)type_ << '\n';
+
     chat_ofs << participants_.getSize() << '\n';
     for (size_t i = 0; i < participants_.getSize(); i++)
         participants_[i].serialize_base_debug(chat_ofs);
@@ -191,6 +221,16 @@ void Chat::deserialize_debug(std::ifstream& ifs)
     std::ifstream chat_ifs(chat_filename_.c_str(), std::ios::in | std::ios::beg);
     if (!chat_ifs.is_open())
         throw std::runtime_error("Could not open chat file");
+
+    chat_ifs >> name_;
+    int type;
+    chat_ifs >> type;
+    if ((ChatType)type == ChatType::DIRECT)
+        type_ = ChatType::DIRECT;
+    else if ((ChatType)type == ChatType::GROUP)
+        type_ = ChatType::GROUP;
+    else
+        throw std::runtime_error("Could not deserialize chat");
 
     size_t temp;
     chat_ifs >> temp;

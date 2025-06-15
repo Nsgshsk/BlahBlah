@@ -36,7 +36,9 @@ public:
 
     UserRole getRole() const;
     const String& getCode() const;
+
     bool checkPassword(const String& password) const;
+    void change_password(const String& old_password, const String& new_password);
 
     bool chat_present(const ChatHash& chat);
 
