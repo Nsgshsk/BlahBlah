@@ -155,6 +155,9 @@
     </ItemDefinitionGroup>
     <ItemGroup>
         <ClCompile Include="Admin.cpp" />
+        <ClCompile Include="AdminManager.cpp"/>
+        <ClCompile Include="AppManager.cpp"/>
+        <ClCompile Include="BaseManager.cpp"/>
         <ClCompile Include="BlahBlah.cpp"/>
         <ClCompile Include="Chat.cpp"/>
         <ClCompile Include="DataRepository.cpp" />
@@ -162,6 +165,7 @@
         <ClCompile Include="Hashable.cpp"/>
         <ClCompile Include="MD5.cpp"/>
         <ClCompile Include="Member.cpp"/>
+        <ClCompile Include="MemberManager.cpp"/>
         <ClCompile Include="Message.cpp"/>
         <ClCompile Include="String.cpp"/>
         <ClCompile Include="User.cpp"/>
@@ -169,6 +173,9 @@
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="Admin.h" />
+        <ClInclude Include="AdminManager.h"/>
+        <ClInclude Include="AppManager.h"/>
+        <ClInclude Include="BaseManager.h"/>
         <ClInclude Include="Chat.h"/>
         <ClInclude Include="DataRepository.h" />
         <ClInclude Include="HashTable.hpp" />
@@ -178,6 +185,7 @@
         <ClInclude Include="List.hpp" />
         <ClInclude Include="MD5.h"/>
         <ClInclude Include="Member.h"/>
+        <ClInclude Include="MemberManager.h"/>
         <ClInclude Include="Message.h"/>
         <ClInclude Include="SerializableList.hpp" />
         <ClInclude Include="SharedPtr.hpp" />

@@ -49,6 +49,14 @@ const String& User::getCode() const
     return code_;
 }
 
+bool User::checkPassword(const String& password) const
+{
+    const uint8_t* temp = HashUtility::hash_password(password.c_str());
+    bool result = HashUtility::compare_hash(temp, password_hash_);
+    delete[] temp;
+    return result;
+}
+
 bool User::chat_present(const ChatHash& chat)
 {
     for (size_t i = 0; i < chats_.getSize(); i++)

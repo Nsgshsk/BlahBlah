@@ -172,6 +172,19 @@ String operator+(const String& left, const String& right)
     return str += right;
 }
 
+bool operator==(const String& left, const String& right)
+{
+    if (left.length() != right.length())
+        return false;
+
+    size_t length = left.length();
+    for (size_t i = 0; i < length; i++)
+        if (left[i] != right[i])
+            return false;
+
+    return true;
+}
+
 std::ostream& operator<<(std::ostream& os, const String& str)
 {
     return os << str.data_;

@@ -36,6 +36,8 @@ public:
 
     UserRole getRole() const;
     const String& getCode() const;
+    bool checkPassword(const String& password) const;
+
     bool chat_present(const ChatHash& chat);
 
     const uint8_t* operator[](size_t index) const;
