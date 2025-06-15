@@ -30,15 +30,19 @@ void Admin::generate_code()
     represent += timebuff;
     const uint8_t* temp = HashUtility::hash_user(represent.c_str());
 
-    int temp_int = temp[0];
+    uint32_t temp_int = temp[0];
     temp_int = (temp_int << 8) + temp[1];
     temp_int = (temp_int << 8) + temp[2];
 
     temp_int %= CODE_MODULO;
 
     code_ = CODE_BEGINNING;
-    for (int i = 1; i < CODE_SIZE - 1; i++)
-        code_ += digitToChar(temp_int);
+    for (int i = 0; i < CODE_SIZE; i++)
+    {
+        char temp_char = digitToChar(temp_int % 10);
+        code_ += temp_char;
+        temp_int /= 10;
+    }
 }
 
 Admin::Admin() = default;
@@ -47,4 +51,5 @@ Admin::Admin(const String& username, const String& password)
     : User(username, password, UserRole::ADMIN)
 {
     generate_code();
+    generate_hash();
 }
