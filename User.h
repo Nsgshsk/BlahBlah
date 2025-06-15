@@ -2,11 +2,14 @@
 #include "UserBase.h"
 #include "ISerializable.h"
 #include "List.hpp"
-#include "SharedPtr.hpp"
 
-class Chat;
+constexpr uint8_t CODE_SIZE = 6;
 
-typedef SharedPtr<Chat> ChatPtr;
+enum class UserRole
+{
+    ADMIN,
+    MEMBER
+};
 
 class User : public UserBase, public ISerializable, public ISerializableDebug
 {
@@ -17,19 +20,22 @@ class User : public UserBase, public ISerializable, public ISerializableDebug
 
     mutable String chats_filename_;
 
+    UserRole role_;
     uint8_t password_hash_[HASH_SIZE];
     List<ChatHash> chats_;
 
     void generate_chats_filename(bool debug) const;
 
 protected:
-    void generate_hash() override;
+    String code_;
+    void generate_hash() final;
 
 public:
     User();
-    User(const String& username, const String& password);
+    User(const String& username, const String& password, UserRole role);
 
-    virtual const char* getCode() const;
+    UserRole getRole() const;
+    const String& getCode() const;
     bool chat_present(const ChatHash& chat);
 
     const uint8_t* operator[](size_t index) const;

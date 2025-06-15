@@ -17,7 +17,9 @@ void User::generate_chats_filename(bool debug = false) const
 
 void User::generate_hash()
 {
-    const String represent = getName();
+    String represent = getName();
+    if (role_ == UserRole::ADMIN)
+        represent += code_;
 
     const uint8_t* temp = HashUtility::hash_user(represent.c_str());
     HashUtility::copy_hash(hash_, temp);
@@ -26,16 +28,25 @@ void User::generate_hash()
 
 User::User() = default;
 
-User::User(const String& username, const String& password) : UserBase(username)
+User::User(const String& username, const String& password, UserRole role) : UserBase(username)
 {
+    role_ = role;
     const uint8_t* temp = HashUtility::hash_password(password.c_str());
     HashUtility::copy_hash(password_hash_, temp);
-    User::generate_hash();
+    generate_hash();
 }
 
-const char* User::getCode() const
+UserRole User::getRole() const
 {
-    return nullptr;
+    return role_;
+}
+
+const String& User::getCode() const
+{
+    if (role_ != UserRole::ADMIN)
+        throw std::runtime_error("Invalid role specific access");
+
+    return code_;
 }
 
 bool User::chat_present(const ChatHash& chat)
@@ -66,6 +77,10 @@ void User::remove_chat(const ChatHash& chat)
 
 void User::serialize(std::ofstream& ofs) const
 {
+    ofs.write((const char*)&role_, sizeof(UserRole));
+    if (role_ == UserRole::ADMIN)
+        ofs.write(code_.c_str(), CODE_SIZE + 2);
+
     size_t temp = name_.length();
     ofs.write((const char*)&temp, sizeof(size_t));
     ofs.write(name_.c_str(), temp + 1);
@@ -89,9 +104,19 @@ void User::serialize(std::ofstream& ofs) const
 
 void User::deserialize(std::ifstream& ifs)
 {
+    ifs.read((char*)&role_, sizeof(UserRole));
+    char* str;
+    if (role_ == UserRole::ADMIN)
+    {
+        str = new char[CODE_SIZE + 1];
+        ifs.read(str, CODE_SIZE + 2);
+        code_ = str;
+        delete[] str;
+    }
+
     size_t temp;
     ifs.read((char*)&temp, sizeof(size_t));
-    char* str = new char[temp + 1];
+    str = new char[temp + 1];
     ifs.read(str, temp + 1);
     name_ = str;
     delete[] str;
@@ -120,6 +145,10 @@ void User::deserialize(std::ifstream& ifs)
 
 void User::serialize_debug(std::ofstream& ofs) const
 {
+    ofs << (int)role_ << '\n';
+    if (role_ == UserRole::ADMIN)
+        ofs << code_ << '\n';
+
     ofs << name_ << '\n';
 
     HashUtility::serialize_hash_text(ofs, password_hash_);
@@ -140,6 +169,18 @@ void User::serialize_debug(std::ofstream& ofs) const
 
 void User::deserialize_debug(std::ifstream& ifs)
 {
+    int role = 0;
+    ifs >> role;
+    if ((UserRole)role == UserRole::ADMIN)
+        role_ = UserRole::ADMIN;
+    else if ((UserRole)role == UserRole::MEMBER)
+        role_ = UserRole::MEMBER;
+    else
+        throw std::runtime_error("Could not deserialize user");
+
+    if (role_ == UserRole::ADMIN)
+        ifs >> code_;
+
     ifs >> name_;
     HashUtility::deserialize_hash_text(ifs, password_hash_);
 

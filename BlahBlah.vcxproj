@@ -161,6 +161,7 @@
         <ClCompile Include="HashUtility.cpp"/>
         <ClCompile Include="Hashable.cpp"/>
         <ClCompile Include="MD5.cpp"/>
+        <ClCompile Include="Member.cpp"/>
         <ClCompile Include="Message.cpp"/>
         <ClCompile Include="String.cpp"/>
         <ClCompile Include="User.cpp"/>
@@ -176,6 +177,7 @@
         <ClInclude Include="ISerializable.h"/>
         <ClInclude Include="List.hpp" />
         <ClInclude Include="MD5.h"/>
+        <ClInclude Include="Member.h"/>
         <ClInclude Include="Message.h"/>
         <ClInclude Include="SerializableList.hpp" />
         <ClInclude Include="SharedPtr.hpp" />

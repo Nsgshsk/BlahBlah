@@ -3,11 +3,16 @@
 
 #include "HashUtility.h"
 
+static constexpr int power_of_10(int exponent)
+{
+    return !exponent ? 1 : 10 * power_of_10(exponent - 1);
+}
+
 static constexpr char CODE_BEGINNING = '#';
 static constexpr uint8_t DATE_TIME_MAX_SIZE = 26;
-static constexpr int CODE_MODULO = 1000000;
+static constexpr int CODE_MODULO = power_of_10(CODE_SIZE);
 
-namespace 
+namespace
 {
     char digitToChar(int digit)
     {
@@ -20,7 +25,7 @@ void Admin::generate_code()
     char timebuff[DATE_TIME_MAX_SIZE]{'\0'};
     std::time_t now = time(nullptr);
     ctime_s(timebuff, DATE_TIME_MAX_SIZE, &now);
-    
+
     String represent = getName();
     represent += timebuff;
     const uint8_t* temp = HashUtility::hash_user(represent.c_str());
@@ -31,55 +36,15 @@ void Admin::generate_code()
 
     temp_int %= CODE_MODULO;
 
-    code_[0] = CODE_BEGINNING;
+    code_ = CODE_BEGINNING;
     for (int i = 1; i < CODE_SIZE - 1; i++)
-        code_[i] = digitToChar(temp_int);
-    code_[CODE_SIZE - 1] = '\0';
-}
-
-void Admin::generate_hash()
-{
-    String represent = getName();
-    represent += code_;
-
-    const uint8_t* temp = HashUtility::hash_user(represent.c_str());
-    HashUtility::copy_hash(hash_, temp);
-    delete[] temp;
+        code_ += digitToChar(temp_int);
 }
 
 Admin::Admin() = default;
 
-Admin::Admin(const String& username, const String& password) : User(username, password)
+Admin::Admin(const String& username, const String& password)
+    : User(username, password, UserRole::ADMIN)
 {
     generate_code();
-    generate_hash();
-}
-
-const char* Admin::getCode() const
-{
-    return code_;
-}
-
-void Admin::serialize(std::ofstream& ofs) const
-{
-    ofs.write((const char*)&code_, sizeof(int));
-    User::serialize(ofs);
-}
-
-void Admin::deserialize(std::ifstream& ifs)
-{
-    ifs.read((char*)&code_, sizeof(int));
-    User::deserialize(ifs);
-}
-
-void Admin::serialize_debug(std::ofstream& ofs) const
-{
-    ofs << code_ << '\n';
-    User::serialize_debug(ofs);
-}
-
-void Admin::deserialize_debug(std::ifstream& ifs)
-{
-    ifs >> code_;
-    User::deserialize_debug(ifs);
 }
