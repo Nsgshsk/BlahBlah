@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include <iosfwd>
 
+template <class T>
+class List<T>;
+
 class String
 {
     char* data_;
@@ -32,7 +35,10 @@ public:
     size_t length() const;
     bool isEmpty() const;
 
-    void reverse();
+    String substr(size_t start, size_t end) const;
+    List<String> split(const String& separator) const;
+
+    void reverse() const;
     const char* c_str() const;
 
     String& operator+=(const String& other);

@@ -44,11 +44,11 @@ void Chat::generate_hash()
 
 Chat::Chat() = default;
 
-Chat::Chat(const List<UserBase>& participants, ChatType type, const UserHash& owner, const String& name)
+Chat::Chat(const List<UserBase>& participants, ChatType type, const UserBase& owner, const String& name)
 {
     participants_ = participants;
     type_ = type;
-    HashUtility::copy_hash(owner_, owner);
+    HashUtility::copy_hash(owner_, owner.getHash());
 
     size_t temp = participants_.getSize();
     if (name.isEmpty())

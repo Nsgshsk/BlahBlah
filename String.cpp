@@ -1,5 +1,24 @@
 ﻿#include "String.h"
+#include <algorithm>
 #include <iostream>
+
+#include "List.hpp"
+
+namespace
+{
+    size_t count_separators(const String& str, const String& separator)
+    {
+        size_t count = 0;
+        for (size_t i = 0; i < str.length(); i++)
+        {
+            String temp = str.substr(i, separator.length());
+            if (temp == separator)
+                count++;
+        }
+
+        return count;
+    }
+}
 
 void String::copyFrom(const char* str)
 {
@@ -141,7 +160,46 @@ bool String::isEmpty() const
     return length() == 0;
 }
 
-void String::reverse()
+String String::substr(size_t start, size_t end) const
+{
+    String substr;
+    if (start > end || end > length() || start < 0)
+        throw std::out_of_range("Arguments are out of range");
+
+    for (size_t i = start; i < end; i++)
+        substr += data_[i];
+
+    return substr;
+}
+
+List<String> String::split(const String& separator) const
+{
+    const size_t check_lenght = length() - separator.length();
+    const size_t separators_count = count_separators(*this, separator);
+
+    List<String> result;
+    size_t begin = 0;
+    for (size_t i = 0; i < separators_count; i++)
+    {
+        size_t end = begin;
+        for (size_t j = begin; j < check_lenght; j++)
+        {
+            String temp = substr(j, j + separator.length());
+            if (temp == separator)
+            {
+                end = j;
+                break;
+            }
+        }
+        end = std::max(begin, end);
+
+        result.add(substr(begin, end));
+        begin = end + separator.length();
+    }
+    return result;
+}
+
+void String::reverse() const
 {
     size_t length = this->length();
     for (size_t i = 0; i < length / 2; i++)

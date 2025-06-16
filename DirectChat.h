@@ -4,5 +4,5 @@
 class DirectChat : public Chat
 {
 public:
-    DirectChat(const UserBase& user);
+    DirectChat(const UserBase& user, const UserBase& owner);
 };

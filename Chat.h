@@ -30,7 +30,7 @@ class Chat : public Hashable, public ISerializable, public ISerializableDebug
 public:
     Chat();
     Chat(const List<UserBase>& participants, ChatType type,
-         const UserHash& owner, const String& name);
+         const UserBase& owner, const String& name);
 
     bool hasParticipant(const UserBase& user) const;
     bool hasParticipant(const UserHash& user_hash) const;

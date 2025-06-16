@@ -1,7 +1,6 @@
 ﻿#include "DirectChat.h"
 
-#include "UserBase.h"
-
-DirectChat::DirectChat(const UserBase& user) : Chat(user, ChatType::DIRECT, "")
+DirectChat::DirectChat(const UserBase& user, const UserBase& owner)
+    : Chat(user, ChatType::DIRECT, owner, "")
 {
 }
