@@ -2,15 +2,31 @@
 #include <iostream>
 #include "User.h"
 #include "Chat.h"
+#include "ChatManager.h"
 #include "DataRepository.h"
 #include "DirectChat.h"
 #include "GroupChat.h"
 
-void MemberManager::select_chat_command(size_t chat_index)
+void MemberManager::select_chat_command(size_t chat_index) const
 {
+    try
+    {
+        size_t chats_count = chats_count();
+        if (chat_index < 1 || chat_index > chats_count)
+            throw std::invalid_argument("There isn't such chat!");
+
+        chat_index--;
+        Chat& chat = data_->getChat((*user_)[chat_index]);
+        ChatManager chat_manager(user_, &chat, data_);
+        chat_manager.login();
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << '\n';
+    }
 }
 
-void MemberManager::create_chat_command(const String& input)
+void MemberManager::create_chat_command(const String& input) const
 {
     try
     {
@@ -19,21 +35,28 @@ void MemberManager::create_chat_command(const String& input)
         bool hasName = !data_->hasUser(arguments[0]);
         if (!hasName && arguments.getSize() < 2)
         {
-            const User& participant = data_->getUser(arguments[0]);
+            User& participant = data_->getUser(arguments[0]);
             DirectChat chat(participant, *user_);
             data_->addChat(chat);
-            *user_->add_chat(chat.getHash());
+            user_->add_chat(chat.getHash());
+            participant.add_chat(chat.getHash());
         }
         else
         {
             List<UserBase> participants;
+            User** temp = new User*[arguments.getSize()];
             for (size_t i = hasName; i < arguments.getSize(); i++)
             {
-                const User& participant = data_->getUser(arguments[i]);
+                User& participant = data_->getUser(arguments[i]);
                 participants.add(participant);
+                temp[i] = &participant;
             }
             GroupChat chat(participants, *user_, hasName ? arguments[0] : "");
             data_->addChat(chat);
+            for (size_t i = hasName; i < arguments.getSize(); i++)
+                temp[i]->add_chat(chat.getHash());
+
+            delete[] temp;
         }
 
         std::cout << "Chat " << arguments[0] << " created successfully!\n";
@@ -44,11 +67,30 @@ void MemberManager::create_chat_command(const String& input)
     }
 }
 
-void MemberManager::view_chats_command()
+void MemberManager::view_chats_command() const
 {
+    std::cout << "Chats:\n";
+    try
+    {
+        size_t chats_count = user_->chats_count();
+        if (chats_count == 0)
+        {
+            std::cout << "You haven't started any chats yet\n";
+            return;
+        }
+
+        for (size_t i = 0; i < chats_count; i++)
+            std::cout << (i + 1) << ") " << data_->getChat((*user_)[i]) << '\n';
+
+        std::cout << '\n';
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << '\n';
+    }
 }
 
-void MemberManager::select_chat_input()
+void MemberManager::select_chat_input() const
 {
     size_t index = 0;
     std::cin >> index;
@@ -56,7 +98,7 @@ void MemberManager::select_chat_input()
     select_chat_command(index);
 }
 
-void MemberManager::create_chat_input()
+void MemberManager::create_chat_input() const
 {
     String input;
     std::cin.ignore();

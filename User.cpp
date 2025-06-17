@@ -7,6 +7,13 @@ constexpr char USER_CHATS_FILENAME_POSTFIX[] = "_chats";
 constexpr char FILE_EXTENSION[] = ".bin";
 constexpr char DEBUG_FILE_EXTENSION[] = ".debug.txt";
 
+User::ChatHash::ChatHash() = default;
+
+User::ChatHash::ChatHash(const uint8_t hash[16])
+{
+    HashUtility::copy_hash(this->hash, hash);
+}
+
 void User::generate_chats_filename(bool debug = false) const
 {
     chats_filename_ = USER_CHATS_FILENAME_PREFIX;
@@ -79,6 +86,11 @@ bool User::chat_present(const ChatHash& chat)
 const uint8_t* User::operator[](size_t index) const
 {
     return chats_[index].hash;
+}
+
+size_t User::chats_count() const
+{
+    return chats_.getSize();
 }
 
 void User::add_chat(const ChatHash& chat)

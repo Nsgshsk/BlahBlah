@@ -47,6 +47,7 @@ Chat::Chat() = default;
 Chat::Chat(const List<UserBase>& participants, ChatType type, const UserBase& owner, const String& name)
 {
     participants_ = participants;
+    participants_.insertAt(0, owner);
     type_ = type;
     HashUtility::copy_hash(owner_, owner.getHash());
 
@@ -95,6 +96,16 @@ void Chat::setOwner(const UserBase& user)
     HashUtility::copy_hash(owner_, user.getHash());
 }
 
+const String& Chat::getName() const
+{
+    return name_;
+}
+
+bool Chat::invitation_control_status() const
+{
+    return invitation_control_;
+}
+
 void Chat::switch_invitation_control()
 {
     invitation_control_ = !invitation_control_;
@@ -132,10 +143,15 @@ void Chat::addParticipant(const UserBase& participant)
     if (hasParticipant(participant))
         throw std::invalid_argument("Participant already exists");
 
-    if (!invitation_control_)
-        participants_.add(participant);
-    else
-        pending_.add(participant);
+    participants_.add(participant);
+}
+
+void Chat::inviteParticipant(const UserBase& participant)
+{
+    if (hasParticipant(participant))
+        throw std::invalid_argument("Participant already exists");
+
+    pending_.add(participant);
 }
 
 void Chat::removeParticipant(const UserBase& participant)

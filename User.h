@@ -16,6 +16,9 @@ class User : public UserBase, public ISerializable, public ISerializableDebug
     struct ChatHash
     {
         uint8_t hash[HASH_SIZE];
+
+        ChatHash();
+        ChatHash(const uint8_t hash[HASH_SIZE]);
     };
 
     mutable String chats_filename_;
@@ -43,6 +46,7 @@ public:
     bool chat_present(const ChatHash& chat);
 
     const uint8_t* operator[](size_t index) const;
+    size_t chats_count() const;
 
     void add_chat(const ChatHash& chat);
     void remove_chat(const ChatHash& chat);

@@ -40,11 +40,14 @@ public:
     const List<Message>& getMessages() const;
 
     void addParticipant(const UserBase& participant);
+    void inviteParticipant(const UserBase& participant);
     void removeParticipant(const UserBase& participant);
     void removeParticipant(const UserHash& participant_hash);
 
     void setOwner(const UserBase& user);
+    const String& getName() const;
 
+    bool invitation_control_status() const;
     void switch_invitation_control();
     const List<UserBase>& get_pending_invitations() const;
     void review_invitation(const UserBase& invitation, bool accepted);

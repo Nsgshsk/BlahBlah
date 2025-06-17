@@ -10,10 +10,10 @@ class UserBase : public Hashable
 {
 protected:
     String name_;
+    UserBase(String name);
 
 public:
     UserBase();
-    UserBase(String name);
 
     const String& getName() const;
 
