@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "Message.h"
 #include "SerializableList.hpp"
+#include "UserBase.h"
 
-class UserBase;
 typedef uint8_t UserHash[HASH_SIZE];
 
 enum class ChatType
@@ -37,6 +37,7 @@ public:
 
     bool isOwner(const UserBase& user) const;
     const List<UserBase>& getParticipants() const;
+    size_t getParticipantsCount() const;
     const List<Message>& getMessages() const;
 
     void addParticipant(const UserBase& participant);

@@ -11,7 +11,7 @@ void MemberManager::select_chat_command(size_t chat_index) const
 {
     try
     {
-        size_t chats_count = chats_count();
+        size_t chats_count = user_->chats_count();
         if (chat_index < 1 || chat_index > chats_count)
             throw std::invalid_argument("There isn't such chat!");
 
@@ -132,10 +132,10 @@ void MemberManager::login()
 {
     std::cout << "Logging in...\n";
     std::cout << *user_ << '\n';
-    String input;
-    while (true)
+    try
     {
-        try
+        String input;
+        while (true)
         {
             std::cout << "> ";
             std::cin >> input;
@@ -158,10 +158,10 @@ void MemberManager::login()
             else
                 std::cout << "Invalid command!\n";
         }
-        catch (std::exception& e)
-        {
-            std::cout << e.what() << '\n';
-        }
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << '\n';
     }
     std::cout << "Logging out...\n";
 }

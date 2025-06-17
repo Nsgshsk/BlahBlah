@@ -193,20 +193,7 @@ Chat& DataRepository::getChat(const uint8_t hash[16])
     return *chat;
 }
 
-const Chat& DataRepository::getChat(const String& username) const
+List<Chat> DataRepository::getAllChats() const
 {
-    const uint8_t* hash = HashUtility::hash_user(username.c_str());
-    const Chat& chat = getChat(hash);
-    delete hash;
-
-    return chat;
-}
-
-Chat& DataRepository::getChat(const String& username)
-{
-    const uint8_t* hash = HashUtility::hash_user(username.c_str());
-    Chat& chat = getChat(hash);
-    delete hash;
-
-    return chat;
+    return chats_->getAll();
 }

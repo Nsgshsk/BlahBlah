@@ -44,6 +44,5 @@ public:
     const Chat& getChat(const uint8_t hash[HASH_SIZE]) const;
     Chat& getChat(const uint8_t hash[HASH_SIZE]);
 
-    const Chat& getChat(const String& username) const;
-    Chat& getChat(const String& username);
+    List<Chat> getAllChats() const;
 };

@@ -133,6 +133,11 @@ const List<UserBase>& Chat::getParticipants() const
     return participants_;
 }
 
+size_t Chat::getParticipantsCount() const
+{
+    return participants_.getSize();
+}
+
 const List<Message>& Chat::getMessages() const
 {
     return messages_;
@@ -211,7 +216,7 @@ void Chat::serialize(std::ofstream& ofs) const
 
     size_t temp = name_.length();
     chat_ofs.write((const char*)&temp, sizeof(size_t));
-    chat_ofs.write(name_.c_str(), temp);
+    chat_ofs.write(name_.c_str(), temp + 1);
 
     chat_ofs.write((const char*)&type_, sizeof(ChatType));
 

@@ -2,7 +2,7 @@
 #include <iosfwd>
 
 template <class T>
-class List<T>;
+class List;
 
 class String
 {
@@ -31,6 +31,9 @@ public:
     char& operator[](size_t index);
 
     void clear();
+
+    String toLower() const;
+    String toUpper() const;
 
     size_t length() const;
     bool isEmpty() const;

@@ -1,6 +1,7 @@
 ﻿#include "AppManager.h"
 
 #include "Admin.h"
+#include "AdminManager.h"
 #include "Member.h"
 
 void AppManager::help_command()
@@ -19,6 +20,19 @@ void AppManager::login_command(const String& username, const String& password)
         User& user = data_.getUser(username);
         if (!user.checkPassword(password))
             throw std::invalid_argument("Invalid username or password");
+
+        if (user.getRole() == UserRole::ADMIN)
+        {
+            AdminManager manager(&user, &data_);
+            manager.login();
+        }
+        else if (user.getRole() == UserRole::MEMBER)
+        {
+            MemberManager manager(&user, &data_);
+            manager.login();
+        }
+        else
+            throw std::runtime_error("Invalid user role!");
     }
     catch (std::exception& e)
     {

@@ -1,7 +1,6 @@
 ﻿#include "String.h"
 #include <algorithm>
 #include <iostream>
-
 #include "List.hpp"
 
 namespace
@@ -148,6 +147,22 @@ void String::clear()
     free();
     capacity_ = 1;
     data_ = new char[capacity_]{'\0'};
+}
+
+String String::toLower() const
+{
+    String temp(*this);
+    for (size_t i = 0; i < temp.length(); i++)
+        temp[i] = std::tolower(data_[i]);
+    return temp;
+}
+
+String String::toUpper() const
+{
+    String temp(*this);
+    for (size_t i = 0; i < temp.length(); i++)
+        temp[i] = std::toupper(data_[i]);
+    return temp;
 }
 
 size_t String::length() const

@@ -81,9 +81,26 @@ void ChatManager::resolve_invite_command(const String& invite, const String& acc
 {
     try
     {
+        const User& temp = data_->getUser(invite);
+        if (!isOwner_)
+            throw std::logic_error("You must own this chat.");
+        if (!chat_->invitation_control_status())
+            throw std::logic_error("This feature is currently disabled!");
+
+        bool status;
+        if (accepted.toLower() == "accept")
+            status = true;
+        else if (accepted.toLower() == "reject")
+            status = false;
+        else
+            throw std::invalid_argument("Invalid invitation review acceptance status!");
+
+        chat_->review_invitation(temp, status);
+        std::cout << temp.getName() << " invitation " << accepted.toLower() << "ed\n";
     }
-    catch (...)
+    catch (std::exception& e)
     {
+        std::cout << e.what() << '\n';
     }
 }
 
@@ -97,7 +114,8 @@ void ChatManager::leave_chat_command() const
 {
     try
     {
-        if (isOwner_)
+        bool last = !chat_->getParticipantsCount();
+        if (isOwner_ && !last)
         {
             const List<UserBase>& participants = chat_->getParticipants();
             for (size_t i = 0; i < participants.getSize(); i++)
@@ -109,6 +127,9 @@ void ChatManager::leave_chat_command() const
         }
         chat_->removeParticipant(*user_);
         user_->remove_chat(chat_->getHash());
+        if (last)
+            data_->removeChat(*chat_);
+
         std::cout << "Left " << chat_->getName() << "chat successfully!\n";
     }
     catch (std::exception& e)
@@ -221,7 +242,7 @@ void ChatManager::help_command()
 void ChatManager::info_command()
 {
     std::cout << "You are " << (isOwner_ ? "Owner" : "Member") << " of ";
-    std::cout << *chat_ << " chat.\n";
+    std::cout << *chat_ << '\n';
     std::cout << "Participants: ";
     const List<UserBase>& participants = chat_->getParticipants();
     for (size_t i = 0; i < participants.getSize(); i++)
@@ -241,4 +262,57 @@ ChatManager::ChatManager(User* user, Chat* chat, DataRepository* data) : BaseMan
 
 void ChatManager::login()
 {
+    std::cout << "Entering " << chat_->getName() << " chat...\n";
+    try
+    {
+        String input;
+        while (true)
+        {
+            std::cout << "> ";
+            std::cin >> input;
+
+            if (input == "logout")
+                break;
+
+            if (input == "help")
+                help_command();
+            else if (input == "view_messages")
+                view_invites_command();
+            else if (input == "sent_message")
+                sent_message_input();
+            else if (input == "invite")
+                invite_input();
+            else if (input == "leave_chat")
+            {
+                std::cout << "Are you sure? (Y/(N)) ";
+                std::cin >> input;
+                input = input.toLower();
+                if (input == "yes" || input == "y")
+                {
+                    leave_chat_command();
+                    break;
+                }
+                std::cout << "Cancelling...\n";
+            }
+            else if (input == "kick")
+                kick_input();
+            else if (input == "transfer_ownership")
+                transfer_ownership_input();
+            else if (input == "invites_status")
+                invites_status_command();
+            else if (input == "toggle_invites")
+                toggle_invites_command();
+            else if (input == "resolve_invite")
+                resolve_invite_input();
+            else if (input == "info")
+                info_command();
+            else
+                std::cout << "Invalid command.\n";
+        }
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << "\n";
+    }
+    std::cout << "Exiting chat...";
 }
