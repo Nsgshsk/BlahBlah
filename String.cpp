@@ -10,7 +10,7 @@ namespace
         size_t count = 0;
         for (size_t i = 0; i < str.length(); i++)
         {
-            String temp = str.substr(i, separator.length());
+            String temp = str.substr(i, i + separator.length());
             if (temp == separator)
                 count++;
         }
@@ -29,7 +29,7 @@ void String::copyFrom(const char* str)
     else
     {
         capacity_ = strlen(str) + 1;
-        data_ = new char[capacity_];
+        data_ = new char[capacity_]{'\0'};
         strcpy_s(data_, capacity_, str);
     }
 }
@@ -178,7 +178,7 @@ bool String::isEmpty() const
 String String::substr(size_t start, size_t end) const
 {
     String substr;
-    if (start > end || end > length() || start < 0)
+    if (start > end || end > length())
         throw std::out_of_range("Arguments are out of range");
 
     for (size_t i = start; i < end; i++)
@@ -194,9 +194,9 @@ List<String> String::split(const String& separator) const
 
     List<String> result;
     size_t begin = 0;
-    for (size_t i = 0; i < separators_count; i++)
+    for (size_t i = 0; i < separators_count + 1; i++)
     {
-        size_t end = begin;
+        size_t end = length();
         for (size_t j = begin; j < check_lenght; j++)
         {
             String temp = substr(j, j + separator.length());
@@ -206,7 +206,6 @@ List<String> String::split(const String& separator) const
                 break;
             }
         }
-        end = std::max(begin, end);
 
         result.add(substr(begin, end));
         begin = end + separator.length();

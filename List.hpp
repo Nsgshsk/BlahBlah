@@ -73,8 +73,8 @@ void List<T>::reorder_left(size_t pos)
 template <class T>
 void List<T>::reorder_right(size_t pos)
 {
-    for (size_t i = size_ - 1; i >= pos; i--)
-        data_[i + 1] = data_[i];
+    for (size_t i = size_; i > pos; i--)
+        data_[i] = data_[i - 1];
 }
 
 template <class T>

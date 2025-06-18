@@ -277,6 +277,8 @@ void ChatManager::login()
             if (input == "help")
                 help_command();
             else if (input == "view_messages")
+                view_messages_command();
+            else if (input == "view_invites")
                 view_invites_command();
             else if (input == "sent_message")
                 sent_message_input();
@@ -314,5 +316,5 @@ void ChatManager::login()
     {
         std::cout << e.what() << "\n";
     }
-    std::cout << "Exiting chat...";
+    std::cout << "Exiting chat...\n";
 }

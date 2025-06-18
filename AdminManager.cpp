@@ -27,7 +27,7 @@ void AdminManager::delete_user_command(const String& user) const
         }
         data_->removeUser(temp);
 
-        std::cout << temp.getName() << " removed successfully!\n";
+        std::cout << user << " removed successfully!\n";
     }
     catch (std::exception& e)
     {

@@ -36,6 +36,8 @@ void MemberManager::create_chat_command(const String& input) const
         if (!hasName && arguments.getSize() < 2)
         {
             User& participant = data_->getUser(arguments[0]);
+            if (participant == *user_)
+                throw std::invalid_argument("You can't start chat with yourself!");
             DirectChat chat(participant, *user_);
             data_->addChat(chat);
             user_->add_chat(chat.getHash());
@@ -48,6 +50,8 @@ void MemberManager::create_chat_command(const String& input) const
             for (size_t i = hasName; i < arguments.getSize(); i++)
             {
                 User& participant = data_->getUser(arguments[i]);
+                if (participant == *user_)
+                    throw std::invalid_argument("You can't start chat with yourself!");
                 participants.add(participant);
                 temp[i] = &participant;
             }
