@@ -75,11 +75,15 @@ void AppManager::register_input()
     register_command(username, password);
 }
 
-AppManager::AppManager()
+AppManager::AppManager(bool debug)
 {
+    debug_ = debug;
     try
     {
-        data_.loadDataDebug();
+        if (!debug_)
+            data_.loadData();
+        else
+            data_.loadDataDebug();
     }
     catch (std::exception& e)
     {
@@ -98,7 +102,10 @@ AppManager::~AppManager()
 {
     try
     {
-        data_.saveDataDebug();
+        if (!debug_)
+            data_.saveData();
+        else
+            data_.saveDataDebug();
     }
     catch (std::exception& e)
     {

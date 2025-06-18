@@ -40,7 +40,7 @@ void DataRepository::saveData() const
     chatsFile.close();
 }
 
-void DataRepository::loadData()
+void DataRepository::loadData() const
 {
     std::ifstream usersFile(USERS_FILENAME, std::ios::binary | std::ios::in | std::ios::beg);
     if (!usersFile.is_open())
@@ -78,7 +78,7 @@ void DataRepository::saveDataDebug() const
     chatsFile.close();
 }
 
-void DataRepository::loadDataDebug()
+void DataRepository::loadDataDebug() const
 {
     std::ifstream usersFile(USERS_DEBUG_FILENAME, std::ios::in | std::ios::beg);
     if (!usersFile.is_open())
@@ -97,22 +97,22 @@ void DataRepository::loadDataDebug()
     chatsFile.close();
 }
 
-void DataRepository::addUser(const User& user)
+void DataRepository::addUser(const User& user) const
 {
     users_->add(user);
 }
 
-void DataRepository::removeUser(const User& user)
+void DataRepository::removeUser(const User& user) const
 {
     users_->remove(user.getHash());
 }
 
-void DataRepository::addChat(const Chat& chat)
+void DataRepository::addChat(const Chat& chat) const
 {
     chats_->add(chat);
 }
 
-void DataRepository::removeChat(const Chat& chat)
+void DataRepository::removeChat(const Chat& chat) const
 {
     chats_->remove(chat.getHash());
 }

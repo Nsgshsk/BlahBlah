@@ -20,16 +20,16 @@ public:
     DataRepository& operator=(DataRepository&& other) = delete;
 
     void saveData() const;
-    void loadData();
+    void loadData() const;
 
     void saveDataDebug() const;
-    void loadDataDebug();
+    void loadDataDebug() const;
 
-    void addUser(const User& user);
-    void removeUser(const User& user);
+    void addUser(const User& user) const;
+    void removeUser(const User& user) const;
 
-    void addChat(const Chat& chat);
-    void removeChat(const Chat& chat);
+    void addChat(const Chat& chat) const;
+    void removeChat(const Chat& chat) const;
 
     bool hasUser(const String& name) const;
     bool hasUser(const uint8_t hash[HASH_SIZE]) const;

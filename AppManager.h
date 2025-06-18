@@ -4,6 +4,7 @@
 class AppManager
 {
     DataRepository data_;
+    bool debug_;
 
     static void help_command();
     void login_command(const String& username, const String& password);
@@ -13,8 +14,13 @@ class AppManager
     void register_input();
 
 public:
-    AppManager();
+    explicit AppManager(bool debug = false);
+    AppManager(const AppManager&) = delete;
+    AppManager& operator=(const AppManager&) = delete;
     ~AppManager();
+
+    AppManager(AppManager&&) = delete;
+    AppManager& operator=(AppManager&&) = delete;
 
     void run();
 };
