@@ -4,7 +4,7 @@
 
 constexpr char USER_CHATS_FILENAME_PREFIX[] = "user_";
 constexpr char USER_CHATS_FILENAME_POSTFIX[] = "_chats";
-constexpr char FILE_EXTENSION[] = ".bin";
+constexpr char FILE_EXTENSION[] = ".data";
 constexpr char DEBUG_FILE_EXTENSION[] = ".debug.txt";
 
 User::ChatHash::ChatHash() = default;

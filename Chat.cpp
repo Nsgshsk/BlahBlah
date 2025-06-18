@@ -5,7 +5,7 @@
 #include "HashUtility.h"
 
 constexpr char CHAT_FILENAME_PREFIX[] = "chat_";
-constexpr char FILE_EXTENSION[] = ".bin";
+constexpr char FILE_EXTENSION[] = ".data";
 constexpr char DEBUG_FILE_EXTENSION[] = ".debug.txt";
 
 void Chat::generate_chat_filename(bool debug = false) const
