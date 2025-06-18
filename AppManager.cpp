@@ -8,8 +8,8 @@ void AppManager::help_command()
 {
     std::cout << "Commands:\n";
     std::cout << "\t1) help\n";
-    std::cout << "\t2) login\n";
-    std::cout << "\t3) register\n";
+    std::cout << "\t2) login <username> <password>\n";
+    std::cout << "\t3) register <username> <password>\n";
     std::cout << "\t4) exit\n";
 }
 
@@ -79,7 +79,7 @@ AppManager::AppManager()
 {
     try
     {
-        data_.loadData();
+        data_.loadDataDebug();
     }
     catch (std::exception& e)
     {
@@ -98,7 +98,7 @@ AppManager::~AppManager()
 {
     try
     {
-        data_.saveData();
+        data_.saveDataDebug();
     }
     catch (std::exception& e)
     {

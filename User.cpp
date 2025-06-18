@@ -138,7 +138,7 @@ void User::deserialize(std::ifstream& ifs)
     char* str;
     if (role_ == UserRole::ADMIN)
     {
-        str = new char[CODE_SIZE + 1];
+        str = new char[CODE_SIZE + 2];
         ifs.read(str, CODE_SIZE + 2);
         code_ = str;
         delete[] str;

@@ -59,6 +59,7 @@ void MemberManager::create_chat_command(const String& input) const
             data_->addChat(chat);
             for (size_t i = hasName; i < arguments.getSize(); i++)
                 temp[i]->add_chat(chat.getHash());
+            user_->add_chat(chat.getHash());
 
             delete[] temp;
         }
@@ -116,9 +117,9 @@ void MemberManager::help_command()
     std::cout << "Commands:\n";
     std::cout << "\t*) help\n";
     std::cout << "\t*) view_chats\n";
-    std::cout << "\t*) select_chat\n";
-    std::cout << "\t*) create_chat\n";
-    std::cout << "\t*) change_password\n";
+    std::cout << "\t*) select_chat <chat_id shown in list>\n";
+    std::cout << "\t*) create_chat <usernames seperated by space (minimum one username)>\n";
+    std::cout << "\t*) change_password <old_password> <new_password>\n";
     std::cout << "\t*) info\n";
     std::cout << "\t*) logout\n";
 }

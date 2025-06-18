@@ -146,16 +146,13 @@ bool HashUtility::compare_hash(const unsigned char left[HASH_SIZE], const unsign
 
 void HashUtility::serialize_hash_text(std::ofstream& ofs, const unsigned char hash[HASH_SIZE])
 {
-    ofs << std::hex;
     for (uint8_t i = 0; i < HASH_SIZE - 1; i++)
         ofs << hash[i] << ' ';
-    ofs << hash[HASH_SIZE - 1] << std::dec << '\n';
+    ofs << hash[HASH_SIZE - 1] << '\n';
 }
 
 void HashUtility::deserialize_hash_text(std::ifstream& ifs, unsigned char hash[HASH_SIZE])
 {
-    ifs >> std::hex;
     for (uint8_t i = 0; i < HASH_SIZE; i++)
         ifs >> hash[i];
-    ifs >> std::dec;
 }

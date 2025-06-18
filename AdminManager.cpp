@@ -56,6 +56,11 @@ void AdminManager::view_all_chats_command() const
 {
     std::cout << "Chats in system:\n";
     const List<Chat> chats = data_->getAllChats();
+    if (chats.getSize() == 0)
+    {
+        std::cout << "No chats found!\n";
+        return;
+    }
     for (size_t i = 0; i < chats.getSize(); i++)
         std::cout << (i + 1) << ") " << chats[i] << '\n';
 }
@@ -81,8 +86,8 @@ void AdminManager::help_command()
     std::cout << "User ";
     MemberManager::help_command();
     std::cout << "Admin Commands:\n";
-    std::cout << "\t*) delete_user\n";
-    std::cout << "\t*) delete_chat\n";
+    std::cout << "\t*) delete_user <username>\n";
+    std::cout << "\t*) delete_chat <chat_id shown in list>\n";
     std::cout << "\t*) view_all_chats\n";
 }
 

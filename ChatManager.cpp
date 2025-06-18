@@ -142,7 +142,7 @@ void ChatManager::invites_status_command() const
 {
     std::cout << "Invites are "
         << (chat_->invitation_control_status() ? "" : "not")
-        << "controlled by Owner.\n";
+        << " controlled by Owner.\n";
 }
 
 void ChatManager::toggle_invites_command() const
@@ -220,19 +220,19 @@ void ChatManager::help_command()
     std::cout << "Commands:\n";
     std::cout << "\t*) help\n";
     std::cout << "\t*) view_messages\n";
-    std::cout << "\t*) sent_message\n";
-    std::cout << "\t*) invite\n";
+    std::cout << "\t*) sent_message <message>\n";
+    std::cout << "\t*) invite <username>\n";
     std::cout << "\t*) leave_chat\n";
     std::cout << "\t*) invites_status\n";
     if (isOwner_)
     {
-        std::cout << "\t*) kick\n";
-        std::cout << "\t*) transfer_ownership\n";
+        std::cout << "\t*) kick <username>\n";
+        std::cout << "\t*) transfer_ownership <username>\n";
         std::cout << "\t*) toggle_invites\n";
         if (chat_->invitation_control_status())
         {
             std::cout << "\t*) view_invites\n";
-            std::cout << "\t*) resolve_invite\n";
+            std::cout << "\t*) resolve_invite <username shown in list>\n";
         }
     }
     std::cout << "\t*) info\n";

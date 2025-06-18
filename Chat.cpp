@@ -11,6 +11,7 @@ constexpr char DEBUG_FILE_EXTENSION[] = ".debug.txt";
 void Chat::generate_chat_filename(bool debug = false) const
 {
     chat_filename_ = CHAT_FILENAME_PREFIX;
+    chat_filename_ += HashUtility::hash_to_str(getHash());
     chat_filename_ += debug ? DEBUG_FILE_EXTENSION : FILE_EXTENSION;
 }
 
@@ -360,9 +361,11 @@ std::ostream& operator<<(std::ostream& os, const Chat& chat)
     if (chat.type_ == ChatType::DIRECT)
         os << "Direct";
     else if (chat.type_ == ChatType::GROUP)
-        os << "Group";
+        os << "Group" << " (" << chat.getParticipantsCount() << " members)";
     else
         throw std::runtime_error("Could not deserialize chat");
+    os << " | " << "messages: " << chat.messages_.getSize();
+
 
     return os;
 }

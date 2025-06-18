@@ -117,6 +117,7 @@ void List<T>::free()
 template <class T>
 void List<T>::resize(size_t newSize)
 {
+    newSize = std::max(newSize, size_);
     T** newData = new T*[newSize]{nullptr};
     for (size_t i = 0; i < size_; i++)
         newData[i] = data_[i];
