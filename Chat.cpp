@@ -97,6 +97,19 @@ void Chat::setOwner(const UserBase& user)
     HashUtility::copy_hash(owner_, user.getHash());
 }
 
+ChatType Chat::getType() const
+{
+    return type_;
+}
+
+void Chat::setName(const String& name)
+{
+    if (name.isEmpty())
+        throw std::invalid_argument("Name is empty");
+
+    name_ = name;
+}
+
 const String& Chat::getName() const
 {
     return name_;
@@ -150,6 +163,8 @@ void Chat::addParticipant(const UserBase& participant)
         throw std::invalid_argument("Participant already exists");
 
     participants_.add(participant);
+    if (participants_.getSize() > 2)
+        type_ = ChatType::GROUP;
 }
 
 void Chat::inviteParticipant(const UserBase& participant)
@@ -166,6 +181,8 @@ void Chat::removeParticipant(const UserBase& participant)
         if (participants_[i] == participant)
         {
             participants_.removeAt(i);
+            if (type_ != ChatType::GROUP && participants_.getSize() != 2)
+                type_ = ChatType::GROUP;
             return;
         }
 
@@ -178,6 +195,8 @@ void Chat::removeParticipant(const UserHash& participant_hash)
         if (participants_[i] == participant_hash)
         {
             participants_.removeAt(i);
+            if (type_ != ChatType::GROUP && participants_.getSize() != 2)
+                type_ = ChatType::GROUP;
             return;
         }
 
@@ -357,7 +376,9 @@ void Chat::deserialize_debug(std::ifstream& ifs)
 
 std::ostream& operator<<(std::ostream& os, const Chat& chat)
 {
-    os << chat.name_ << " | ";
+    if (chat.type_ == ChatType::GROUP)
+        os << chat.name_;
+    os << " | type: ";
     if (chat.type_ == ChatType::DIRECT)
         os << "Direct";
     else if (chat.type_ == ChatType::GROUP)

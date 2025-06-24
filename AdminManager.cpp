@@ -24,6 +24,11 @@ void AdminManager::delete_user_command(const String& user) const
             chat.removeParticipant(temp);
             if (!chat.getParticipantsCount())
                 data_->removeChat(chat);
+            else
+            {
+                const UserBase& participant = chat.getParticipants()[0];
+                chat.setOwner(participant);
+            }
         }
         data_->removeUser(temp);
 
@@ -39,7 +44,10 @@ void AdminManager::delete_chat_command(size_t index) const
 {
     try
     {
-        const Chat chat = data_->getAllChats()[index];
+        if (!index)
+            throw std::invalid_argument("Invalid index");
+
+        const Chat chat = data_->getAllChats()[index - 1];
         const List<UserBase>& participants = chat.getParticipants();
         for (size_t i = 0; i < participants.getSize(); i++)
             data_->getUser(participants[i].getHash()).remove_chat(chat.getHash());

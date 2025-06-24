@@ -4,6 +4,29 @@
 #include "DataRepository.h"
 #include "User.h"
 
+void ChatManager::rename_chat_command(const String& name) const
+{
+    try
+    {
+        if (chat_->getType() == ChatType::DIRECT)
+            throw std::logic_error("You don't have permission to do that.");
+        chat_->setName(name);
+        std::cout << "Renaming chat to " << name << '\n';
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << '\n';
+    }
+}
+
+void ChatManager::rename_chat_input() const
+{
+    String name;
+    std::cin >> name;
+
+    rename_chat_command(name);
+}
+
 void ChatManager::sent_message_command(const String& message) const
 {
     try
@@ -45,6 +68,9 @@ void ChatManager::kick_command(const String& user) const
 {
     try
     {
+        if (chat_->getType() == ChatType::DIRECT)
+            throw std::logic_error("You don't have permission to do that.");
+
         User& temp = data_->getUser(user);
         if (!isOwner_ || chat_->isOwner(temp))
             throw std::logic_error("You don't have permission to kick!");
@@ -63,6 +89,8 @@ void ChatManager::transfer_ownership_command(const String& user)
 {
     try
     {
+        if (chat_->getType() == ChatType::DIRECT)
+            throw std::logic_error("You don't have permission to do that.");
         if (!isOwner_)
             throw std::logic_error("You must own this chat.");
 
@@ -81,7 +109,10 @@ void ChatManager::resolve_invite_command(const String& invite, const String& acc
 {
     try
     {
-        const User& temp = data_->getUser(invite);
+        if (chat_->getType() == ChatType::DIRECT)
+            throw std::logic_error("You don't have permission to do that.");
+
+        User& temp = data_->getUser(invite);
         if (!isOwner_)
             throw std::logic_error("You must own this chat.");
         if (!chat_->invitation_control_status())
@@ -96,6 +127,8 @@ void ChatManager::resolve_invite_command(const String& invite, const String& acc
             throw std::invalid_argument("Invalid invitation review acceptance status!");
 
         chat_->review_invitation(temp, status);
+        if (status)
+            temp.add_chat(chat_->getHash());
         std::cout << temp.getName() << " invitation " << accepted.toLower() << "ed\n";
     }
     catch (std::exception& e)
@@ -114,7 +147,7 @@ void ChatManager::leave_chat_command() const
 {
     try
     {
-        bool last = !chat_->getParticipantsCount();
+        bool last = chat_->getParticipantsCount() == 1;
         if (isOwner_ && !last)
         {
             const List<UserBase>& participants = chat_->getParticipants();
@@ -140,15 +173,27 @@ void ChatManager::leave_chat_command() const
 
 void ChatManager::invites_status_command() const
 {
-    std::cout << "Invites are "
-        << (chat_->invitation_control_status() ? "" : "not")
-        << " controlled by Owner.\n";
+    try
+    {
+        if (chat_->getType() == ChatType::DIRECT)
+            throw std::logic_error("You don't have permission to do that.");
+
+        std::cout << "Invites are"
+            << (chat_->invitation_control_status() ? "" : " not")
+            << " controlled by Owner.\n";
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << '\n';
+    }
 }
 
 void ChatManager::toggle_invites_command() const
 {
     try
     {
+        if (chat_->getType() == ChatType::DIRECT)
+            throw std::logic_error("You don't have permission to do that.");
         if (!isOwner_)
             throw std::logic_error("You must own this chat!");
         chat_->switch_invitation_control();
@@ -162,15 +207,24 @@ void ChatManager::toggle_invites_command() const
 
 void ChatManager::view_invites_command() const
 {
-    std::cout << "Viewing invites...\n";
-    const List<UserBase> invites = chat_->get_pending_invitations();
-    if (invites.getSize() == 0)
-        std::cout << "No pending invites.\n";
+    try
+    {
+        if (chat_->getType() == ChatType::DIRECT)
+            throw std::logic_error("You don't have permission to do that.");
+        std::cout << "Viewing invites...\n";
+        const List<UserBase> invites = chat_->get_pending_invitations();
+        if (invites.getSize() == 0)
+            std::cout << "No pending invites.\n";
 
-    for (size_t i = 0; i < invites.getSize(); i++)
-        std::cout << "*) " << invites[i] << " - pending\n";
+        for (size_t i = 0; i < invites.getSize(); i++)
+            std::cout << "*) " << invites[i] << " - pending\n";
 
-    std::cout << '\n';
+        std::cout << '\n';
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << "\n";
+    }
 }
 
 void ChatManager::sent_message_input() const
@@ -223,9 +277,10 @@ void ChatManager::help_command()
     std::cout << "\t*) sent_message <message>\n";
     std::cout << "\t*) invite <username>\n";
     std::cout << "\t*) leave_chat\n";
-    std::cout << "\t*) invites_status\n";
-    if (isOwner_)
+    if (isOwner_ && chat_->getType() == ChatType::GROUP)
     {
+        std::cout << "\t*) invites_status\n";
+        std::cout << "\t*) rename_chat <name>";
         std::cout << "\t*) kick <username>\n";
         std::cout << "\t*) transfer_ownership <username>\n";
         std::cout << "\t*) toggle_invites\n";
@@ -241,14 +296,38 @@ void ChatManager::help_command()
 
 void ChatManager::info_command()
 {
-    std::cout << "You are " << (isOwner_ ? "Owner" : "Member") << " of ";
-    std::cout << *chat_ << '\n';
-    std::cout << "Participants: ";
     const List<UserBase>& participants = chat_->getParticipants();
+    if (chat_->getType() == ChatType::GROUP)
+    {
+        std::cout << "You are " << (isOwner_ ? "Owner" : "Member") << " of ";
+        std::cout << *chat_ << '\n';
+    }
+    else
+    {
+        const UserBase* user = nullptr;
+        for (size_t i = 0; i < participants.getSize(); i++)
+            if (participants[i] != *user_)
+                user = &participants[i];
+        if (user != nullptr)
+            std::cout << "You are chatting with " << user->getName();
+        else
+            std::cout << "You are alone in chat.";
+
+        std::cout << *chat_ << '\n';
+    }
+    std::cout << "Participants: ";
     for (size_t i = 0; i < participants.getSize(); i++)
     {
-        if (chat_->isOwner(participants[i]))
-            std::cout << "(Owner) ";
+        bool twoArg = false;
+        std::cout << '(';
+        if (chat_->isOwner(participants[i]) && chat_->getType() == ChatType::GROUP)
+        {
+            twoArg = true;
+            std::cout << "Owner";
+        }
+        if (participants[i] == *user_)
+            std::cout << (twoArg ? ", " : "") << "You";
+        std::cout << ") ";
         std::cout << participants[i] << (i != participants.getSize() - 1 ? ", " : "");
     }
     std::cout << '\n';
@@ -296,6 +375,8 @@ void ChatManager::login()
                 }
                 std::cout << "Cancelling...\n";
             }
+            else if (input == "rename_chat")
+                rename_chat_input();
             else if (input == "kick")
                 kick_input();
             else if (input == "transfer_ownership")

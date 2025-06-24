@@ -32,9 +32,11 @@ void MemberManager::create_chat_command(const String& input) const
     {
         List<String> arguments = input.split(" ");
 
+        bool isDirect = false;
         bool hasName = !data_->hasUser(arguments[0]);
         if (!hasName && arguments.getSize() < 2)
         {
+            isDirect = true;
             User& participant = data_->getUser(arguments[0]);
             if (participant == *user_)
                 throw std::invalid_argument("You can't start chat with yourself!");
@@ -64,7 +66,7 @@ void MemberManager::create_chat_command(const String& input) const
             delete[] temp;
         }
 
-        std::cout << "Chat " << arguments[0] << " created successfully!\n";
+        std::cout << "Chat " << (isDirect ? "with " : "") << arguments[0] << " created successfully!\n";
     }
     catch (std::exception& e)
     {
@@ -85,7 +87,19 @@ void MemberManager::view_chats_command() const
         }
 
         for (size_t i = 0; i < chats_count; i++)
-            std::cout << (i + 1) << ") " << data_->getChat((*user_)[i]) << '\n';
+        {
+            const Chat& chat = data_->getChat((*user_)[i]);
+            std::cout << (i + 1) << ") ";
+            if (chat.getType() == ChatType::DIRECT)
+            {
+                const List<UserBase>& participants = chat.getParticipants();
+                for (size_t j = 0; j < participants.getSize(); j++)
+                    if (participants[j] != *user_)
+                        std::cout << participants[j].getName();
+            }
+            std::cout << chat;
+            std::cout << '\n';
+        }
 
         std::cout << '\n';
     }

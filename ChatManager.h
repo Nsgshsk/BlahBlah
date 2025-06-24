@@ -8,6 +8,7 @@ class ChatManager : public BaseManager
     bool isOwner_;
     Chat* chat_;
 
+    void rename_chat_command(const String& name) const;
     void sent_message_command(const String& message) const;
     void invite_command(const String& user) const;
     void kick_command(const String& user) const;
@@ -23,6 +24,7 @@ protected:
     void toggle_invites_command() const;
     void view_invites_command() const;
 
+    void rename_chat_input() const;
     void sent_message_input() const;
     void invite_input() const;
     void kick_input() const;

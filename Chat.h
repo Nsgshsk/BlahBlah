@@ -46,6 +46,9 @@ public:
     void removeParticipant(const UserHash& participant_hash);
 
     void setOwner(const UserBase& user);
+    ChatType getType() const;
+
+    void setName(const String& name);
     const String& getName() const;
 
     bool invitation_control_status() const;
