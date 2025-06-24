@@ -121,6 +121,7 @@ void AppManager::run()
 {
     try
     {
+        std::cout << "Use help if you don't remember the commands.\n";
         String input;
         while (true)
         {
