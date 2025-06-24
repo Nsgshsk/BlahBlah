@@ -4,6 +4,9 @@
 #include "DataRepository.h"
 #include "User.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 void ChatManager::rename_chat_command(const String& name) const
 {
     try

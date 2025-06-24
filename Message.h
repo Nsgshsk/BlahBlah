@@ -6,6 +6,9 @@
 #include "ISerializable.h"
 #include "String.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 constexpr uint8_t DATE_TIME_MAX_SIZE = 26;
 
 class Message final : public Hashable, public ISerializable, public ISerializableDebug

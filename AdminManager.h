@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include "MemberManager.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 class AdminManager : public MemberManager
 {
     void delete_user_command(const String& user) const;

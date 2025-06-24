@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include <iostream>
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 constexpr uint8_t DEFAULT_LIST_CAPACITY = 8;
 
 template <class T>

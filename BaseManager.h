@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include "String.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 class User;
 class DataRepository;
 

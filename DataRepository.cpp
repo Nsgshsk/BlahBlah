@@ -4,6 +4,9 @@
 #include "HashUtility.h"
 #include "User.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 static constexpr char USERS_FILENAME[] = "users.data";
 static constexpr char CHAT_FILENAME[] = "chats.data";
 static constexpr char USERS_DEBUG_FILENAME[] = "users.debug.txt";

@@ -3,6 +3,9 @@
 #include <fstream>
 #include "HashUtility.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 UserBase::UserBase() = default;
 
 UserBase::UserBase(String name) : name_(std::move(name))

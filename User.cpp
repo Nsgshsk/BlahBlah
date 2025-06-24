@@ -2,6 +2,9 @@
 #include "Chat.h"
 #include "HashUtility.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 constexpr char USER_CHATS_FILENAME_PREFIX[] = "user_";
 constexpr char USER_CHATS_FILENAME_POSTFIX[] = "_chats";
 constexpr char FILE_EXTENSION[] = ".data";

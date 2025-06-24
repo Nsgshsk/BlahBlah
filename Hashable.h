@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include <cstdint>
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 constexpr uint8_t HASH_SIZE = 16;
 
 class Hashable

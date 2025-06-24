@@ -4,6 +4,9 @@
 #include <cstring>
 #include <stdexcept>
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 // MD5 implementation based on pseudocode from https://en.wikipedia.org/wiki/MD5  
 // Created on 03/05/2025 for a university project requiring a custom hash solution.  
 //  

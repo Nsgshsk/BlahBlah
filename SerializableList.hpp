@@ -2,6 +2,9 @@
 #include <fstream>
 #include "List.hpp"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 template <class T>
 class SerializableList : public List<T>
 {

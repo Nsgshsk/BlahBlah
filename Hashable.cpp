@@ -5,6 +5,9 @@
 
 #include "HashUtility.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 void Hashable::generate_hash()
 {
     throw std::logic_error("Hash generation not implemented");

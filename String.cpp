@@ -3,6 +3,9 @@
 #include <iostream>
 #include "List.hpp"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 namespace
 {
     size_t count_separators(const String& str, const String& separator)

@@ -4,6 +4,9 @@
 #include "UserBase.h"
 #include "HashUtility.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 constexpr char CHAT_FILENAME_PREFIX[] = "chat_";
 constexpr char FILE_EXTENSION[] = ".data";
 constexpr char DEBUG_FILE_EXTENSION[] = ".debug.txt";
@@ -240,6 +243,8 @@ void Chat::serialize(std::ofstream& ofs) const
 
     chat_ofs.write((const char*)&type_, sizeof(ChatType));
 
+    chat_ofs.write((const char*)owner_, HASH_SIZE);
+
     temp = participants_.getSize();
     chat_ofs.write((const char*)&temp, sizeof(size_t));
     for (size_t i = 0; i < temp; i++)
@@ -279,6 +284,8 @@ void Chat::deserialize(std::ifstream& ifs)
 
     chat_ifs.read((char*)&type_, sizeof(ChatType));
 
+    chat_ifs.read((char*)&owner_, HASH_SIZE);
+
     chat_ifs.read((char*)&temp, sizeof(size_t));
     for (size_t i = 0; i < temp; i++)
     {
@@ -292,7 +299,11 @@ void Chat::deserialize(std::ifstream& ifs)
     {
         chat_ifs.read((char*)&temp, sizeof(size_t));
         for (size_t i = 0; i < temp; i++)
-            pending_[i].deserialize_base(chat_ifs);
+        {
+            UserBase user;
+            user.deserialize_base(chat_ifs);
+            pending_.add(user);
+        }
     }
 
     this->messages_.deserialize(chat_ifs);
@@ -313,6 +324,7 @@ void Chat::serialize_debug(std::ofstream& ofs) const
 
     chat_ofs << name_ << '\n';
     chat_ofs << (int)type_ << '\n';
+    HashUtility::serialize_hash_text(chat_ofs, owner_);
 
     chat_ofs << participants_.getSize() << '\n';
     for (size_t i = 0; i < participants_.getSize(); i++)
@@ -351,6 +363,8 @@ void Chat::deserialize_debug(std::ifstream& ifs)
         type_ = ChatType::GROUP;
     else
         throw std::runtime_error("Could not deserialize chat");
+
+    HashUtility::deserialize_hash_text(chat_ifs, owner_);
 
     size_t temp;
     chat_ifs >> temp;

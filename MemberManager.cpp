@@ -7,6 +7,9 @@
 #include "DirectChat.h"
 #include "GroupChat.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 void MemberManager::select_chat_command(size_t chat_index) const
 {
     try

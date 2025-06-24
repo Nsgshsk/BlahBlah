@@ -4,6 +4,9 @@
 #include "AdminManager.h"
 #include "Member.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 void AppManager::help_command()
 {
     std::cout << "Commands:\n";

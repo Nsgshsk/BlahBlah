@@ -3,6 +3,9 @@
 #include "SerializableList.hpp"
 #include "UserBase.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 typedef uint8_t UserHash[HASH_SIZE];
 
 enum class ChatType

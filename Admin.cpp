@@ -3,6 +3,9 @@
 
 #include "HashUtility.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 static constexpr int power_of_10(int exponent)
 {
     return !exponent ? 1 : 10 * power_of_10(exponent - 1);

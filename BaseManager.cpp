@@ -6,6 +6,9 @@
 #include "String.h"
 #include "User.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 void BaseManager::change_password_command(const String& old_password, const String& new_password) const
 {
     try

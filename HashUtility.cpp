@@ -5,6 +5,9 @@
 
 #include "MD5.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 // Helper functions and constants
 namespace
 {

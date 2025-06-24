@@ -2,6 +2,9 @@
 #include "Hashable.h"
 #include "SerializableList.hpp"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 constexpr uint8_t BYTE_BITS = 8;
 constexpr uint8_t BUCKET_BYTES = 1;
 constexpr int BUCKETS_NUM = 1 << BUCKET_BYTES * BYTE_BITS;

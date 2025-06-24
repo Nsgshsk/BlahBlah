@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include <iosfwd>
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 namespace HashUtility
 {
     constexpr unsigned char HASH_SIZE = 16;

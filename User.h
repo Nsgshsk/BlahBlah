@@ -3,6 +3,9 @@
 #include "ISerializable.h"
 #include "List.hpp"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 constexpr uint8_t CODE_SIZE = 6;
 
 enum class UserRole

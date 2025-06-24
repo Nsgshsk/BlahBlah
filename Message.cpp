@@ -4,6 +4,9 @@
 
 #include "HashUtility.h"
 
+// Lubomir Vasilev Topalski
+// 8MI0600446 SE 1 Year Group 2
+
 void Message::generate_hash()
 {
     String represent = sender_;
