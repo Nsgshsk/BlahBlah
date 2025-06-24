@@ -114,9 +114,7 @@ void User::serialize(std::ofstream& ofs) const
     if (role_ == UserRole::ADMIN)
         ofs.write(code_.c_str(), CODE_SIZE + 2);
 
-    size_t temp = name_.length();
-    ofs.write((const char*)&temp, sizeof(size_t));
-    ofs.write(name_.c_str(), temp + 1);
+    name_.serialize(ofs);
 
     ofs.write((const char*)password_hash_, HASH_SIZE);
 
@@ -127,7 +125,7 @@ void User::serialize(std::ofstream& ofs) const
     if (!chats_ofs.is_open())
         throw std::runtime_error("Could not open user_chats file");
 
-    temp = chats_.getSize();
+    size_t temp = chats_.getSize();
     chats_ofs.write((const char*)&temp, sizeof(size_t));
     for (size_t i = 0; i < temp; i++)
         chats_ofs.write((const char*)&chats_[i], sizeof(ChatHash));
@@ -147,12 +145,7 @@ void User::deserialize(std::ifstream& ifs)
         delete[] str;
     }
 
-    size_t temp;
-    ifs.read((char*)&temp, sizeof(size_t));
-    str = new char[temp + 1];
-    ifs.read(str, temp + 1);
-    name_ = str;
-    delete[] str;
+    name_.deserialize(ifs);
 
     ifs.read((char*)password_hash_, HASH_SIZE);
 
@@ -165,6 +158,7 @@ void User::deserialize(std::ifstream& ifs)
     if (!chats_ifs.is_open())
         throw std::runtime_error("Could not open user_chats file");
 
+    size_t temp;
     chats_ifs.read((char*)&temp, sizeof(size_t));
     for (size_t i = 0; i < temp; i++)
     {

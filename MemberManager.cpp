@@ -22,6 +22,7 @@ void MemberManager::select_chat_command(size_t chat_index) const
         Chat& chat = data_->getChat((*user_)[chat_index]);
         ChatManager chat_manager(user_, &chat, data_);
         chat_manager.login();
+        std::cout << *user_ << '\n';
     }
     catch (std::exception& e)
     {

@@ -1,6 +1,6 @@
 ﻿#include "String.h"
 #include <algorithm>
-#include <iostream>
+#include <fstream>
 #include "List.hpp"
 
 // Lubomir Vasilev Topalski
@@ -239,6 +239,23 @@ String& String::operator+=(const String& other)
 
     strcat_s(this->data_, capacity_, other.data_);
     return *this;
+}
+
+void String::serialize(std::ofstream& ofs) const
+{
+    size_t length = this->length();
+    ofs.write((const char*)&length, sizeof(size_t));
+    ofs.write(data_, length + 1);
+}
+
+void String::deserialize(std::ifstream& ifs)
+{
+    size_t length;
+    ifs.read((char*)&length, sizeof(size_t));
+    char* data = new char[length + 1];
+    ifs.read(data, length + 1);
+    *this = data;
+    delete[] data;
 }
 
 String operator+(const String& left, const String& right)

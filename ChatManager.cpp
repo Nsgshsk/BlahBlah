@@ -280,21 +280,25 @@ void ChatManager::help_command()
     std::cout << "\t*) sent_message <message>\n";
     std::cout << "\t*) invite <username>\n";
     std::cout << "\t*) leave_chat\n";
-    if (isOwner_ && chat_->getType() == ChatType::GROUP)
+    if (chat_->getType() == ChatType::GROUP)
     {
         std::cout << "\t*) invites_status\n";
-        std::cout << "\t*) rename_chat <name>";
-        std::cout << "\t*) kick <username>\n";
-        std::cout << "\t*) transfer_ownership <username>\n";
-        std::cout << "\t*) toggle_invites\n";
-        if (chat_->invitation_control_status())
+        if (isOwner_)
         {
-            std::cout << "\t*) view_invites\n";
-            std::cout << "\t*) resolve_invite <username shown in list>\n";
+            std::cout << "\t*) rename_chat <new group name>\n";
+            std::cout << "\t*) kick <username>\n";
+            std::cout << "\t*) transfer_ownership <username>\n";
+            std::cout << "\t*) toggle_invites\n";
+            if (chat_->invitation_control_status())
+            {
+                std::cout << "\t*) view_invites\n";
+                std::cout << "\t*) resolve_invite <username shown in list>\n";
+            }
         }
     }
+
     std::cout << "\t*) info\n";
-    std::cout << "\t*) logout\n";
+    std::cout << "\t*) exit\n";
 }
 
 void ChatManager::info_command()
@@ -356,7 +360,7 @@ void ChatManager::login()
             std::cout << "> ";
             std::cin >> input;
 
-            if (input == "logout")
+            if (input == "exit")
                 break;
 
             if (input == "help")

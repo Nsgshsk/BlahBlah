@@ -237,15 +237,13 @@ void Chat::serialize(std::ofstream& ofs) const
     if (!chat_ofs.is_open())
         throw std::runtime_error("Could not open chat file");
 
-    size_t temp = name_.length();
-    chat_ofs.write((const char*)&temp, sizeof(size_t));
-    chat_ofs.write(name_.c_str(), temp + 1);
+    name_.serialize(chat_ofs);
 
     chat_ofs.write((const char*)&type_, sizeof(ChatType));
 
     chat_ofs.write((const char*)owner_, HASH_SIZE);
 
-    temp = participants_.getSize();
+    size_t temp = participants_.getSize();
     chat_ofs.write((const char*)&temp, sizeof(size_t));
     for (size_t i = 0; i < temp; i++)
         participants_[i].serialize_base(chat_ofs);
@@ -275,17 +273,13 @@ void Chat::deserialize(std::ifstream& ifs)
     if (!chat_ifs.is_open())
         throw std::runtime_error("Could not open chat file");
 
-    size_t temp;
-    chat_ifs.read((char*)&temp, sizeof(size_t));
-    char* str = new char[temp + 1];
-    chat_ifs.read(str, temp + 1);
-    name_ = str;
-    delete[] str;
+    name_.deserialize(chat_ifs);
 
     chat_ifs.read((char*)&type_, sizeof(ChatType));
 
     chat_ifs.read((char*)&owner_, HASH_SIZE);
 
+    size_t temp;
     chat_ifs.read((char*)&temp, sizeof(size_t));
     for (size_t i = 0; i < temp; i++)
     {

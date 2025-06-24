@@ -49,6 +49,9 @@ public:
 
     String& operator+=(const String& other);
 
+    void serialize(std::ofstream& ofs) const;
+    void deserialize(std::ifstream& ifs);
+
     friend std::ostream& operator<<(std::ostream& os, const String& str);
     friend std::istream& operator>>(std::istream& is, String& str);
 

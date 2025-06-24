@@ -33,39 +33,22 @@ Message::Message(String sender, String message) : sender_(std::move(sender)), me
 // Serializes message into a binary file
 void Message::serialize(std::ofstream& ofs) const
 {
-    size_t temp = sender_.length();
-    ofs.write((const char*)&temp, sizeof(size_t));
-    ofs.write(sender_.c_str(), temp + 1);
-
+    sender_.serialize(ofs);
     ofs.write(dateTime_, DATE_TIME_MAX_SIZE);
-
-    temp = message_.length();
-    ofs.write((const char*)&temp, sizeof(size_t));
-    ofs.write(message_.c_str(), temp + 1);
+    message_.serialize(ofs);
 }
 
 // Deserializes message from a binary file
 void Message::deserialize(std::ifstream& ifs)
 {
-    size_t temp; // Temporary variable for lengths
-    char* str; // Temporary variable for strings
-
     // Sender string deserialization from binary
-    ifs.read((char*)&temp, sizeof(size_t)); // Sender string length
-    str = new char[temp + 1];
-    ifs.read(str, temp + 1);
-    sender_ = str;
-    delete[] str;
+    sender_.deserialize(ifs);
 
     // Datetime string deserialization from binary
     ifs.read(dateTime_, DATE_TIME_MAX_SIZE);
 
     // Message string deserialization from text
-    ifs.read((char*)&temp, sizeof(size_t)); // Message string length
-    str = new char[temp + 1];
-    ifs.read(str, temp + 1);
-    message_ = str;
-    delete[] str;
+    message_.deserialize(ifs);
 
     generate_hash();
 }

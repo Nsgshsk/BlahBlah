@@ -21,21 +21,14 @@ void UserBase::serialize_base(std::ofstream& ofs) const
 {
     ofs.write((const char*)hash_, HASH_SIZE);
 
-    size_t temp = name_.length();
-    ofs.write((const char*)&temp, sizeof(size_t));
-    ofs.write(name_.c_str(), temp + 1);
+    name_.serialize(ofs);
 }
 
 void UserBase::deserialize_base(std::ifstream& ifs)
 {
     ifs.read((char*)hash_, HASH_SIZE);
 
-    size_t temp;
-    ifs.read((char*)&temp, sizeof(size_t));
-    char* str = new char[temp + 1];
-    ifs.read(str, temp + 1);
-    name_ = str;
-    delete[] str;
+    name_.deserialize(ifs);
 }
 
 void UserBase::serialize_base_debug(std::ofstream& ofs) const
