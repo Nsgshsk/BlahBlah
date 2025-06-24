@@ -124,7 +124,7 @@ bool DataRepository::hasUser(const String& name) const
 {
     const uint8_t* hash = HashUtility::hash_user(name.c_str());
     bool exists = hasUser(hash);
-    delete hash;
+    delete[] hash;
 
     return exists;
 }
@@ -163,7 +163,7 @@ const User& DataRepository::getUser(const String& username) const
 {
     const uint8_t* hash = HashUtility::hash_user(username.c_str());
     const User& user = getUser(hash);
-    delete hash;
+    delete[] hash;
 
     return user;
 }
@@ -172,7 +172,7 @@ User& DataRepository::getUser(const String& username)
 {
     const uint8_t* hash = HashUtility::hash_user(username.c_str());
     User& user = getUser(hash);
-    delete hash;
+    delete[] hash;
 
     return user;
 }

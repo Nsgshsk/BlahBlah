@@ -36,6 +36,7 @@ void Admin::generate_code()
     uint32_t temp_int = temp[0];
     temp_int = (temp_int << 8) + temp[1];
     temp_int = (temp_int << 8) + temp[2];
+    delete[] temp;
 
     temp_int %= CODE_MODULO;
 

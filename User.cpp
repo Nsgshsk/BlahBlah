@@ -43,6 +43,7 @@ User::User(const String& username, const String& password, UserRole role) : User
     role_ = role;
     const uint8_t* temp = HashUtility::hash_password(password.c_str());
     HashUtility::copy_hash(password_hash_, temp);
+    delete[] temp;
     generate_hash();
 }
 
