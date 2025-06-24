@@ -166,7 +166,7 @@ void ChatManager::leave_chat_command() const
         if (last)
             data_->removeChat(*chat_);
 
-        std::cout << "Left " << chat_->getName() << "chat successfully!\n";
+        std::cout << "Left " << chat_->getName() << " chat successfully!\n";
     }
     catch (std::exception& e)
     {
@@ -321,16 +321,19 @@ void ChatManager::info_command()
     std::cout << "Participants: ";
     for (size_t i = 0; i < participants.getSize(); i++)
     {
-        bool twoArg = false;
-        std::cout << '(';
+        bool argument = false;
         if (chat_->isOwner(participants[i]) && chat_->getType() == ChatType::GROUP)
         {
-            twoArg = true;
-            std::cout << "Owner";
+            std::cout << "(Owner";
+            argument = true;
         }
         if (participants[i] == *user_)
-            std::cout << (twoArg ? ", " : "") << "You";
-        std::cout << ") ";
+        {
+            std::cout << (argument ? ", " : "(") << "You";
+            argument = true;
+        }
+        if (argument)
+            std::cout << ") ";
         std::cout << participants[i] << (i != participants.getSize() - 1 ? ", " : "");
     }
     std::cout << '\n';
